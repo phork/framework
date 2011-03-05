@@ -14,7 +14,7 @@
 	 * $objRest = new Zend_Rest_Client();
 	 * </code>
 	 *
-	 * Copyright 2006-2010, Phork Labs. (http://phorklabs.com)
+	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License
 	 * Redistributions of files must retain the above copyright notice.

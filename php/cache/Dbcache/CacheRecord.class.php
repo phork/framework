@@ -8,7 +8,7 @@
 	 * additional functionality to store the serialized
 	 * cache data.
 	 *
-	 * Copyright 2006-2010, Phork Labs. (http://phorklabs.com)
+	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @package phork

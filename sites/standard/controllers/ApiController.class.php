@@ -7,10 +7,10 @@
 	 * This controller handles all the API calls. It dispatches
 	 * to the API methods after authenticating the user.
 	 * 
-	 * Copyright 2006-2010, Phork Labs. (http://phorklabs.com)
+	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
-	 * @package phork-standard
+	 * @package phork
 	 * @subpackage controllers
 	 */
 	class ApiController extends CoreControllerLite {
@@ -34,16 +34,6 @@
 		public function run() {
 			$this->strFormat = AppRegistry::get('Url')->getExtension();
 			try {
-				if ($this->blnEncryptInput || $this->blnEncryptOutput) {
-					AppLoader::includeExtension('phpseclib/Crypt/', 'AES', true);
-					
-					if ($this->blnEncryptInput && !empty($_SERVER['QUERY_STRING'])) {
-						$objAes = new Crypt_AES();
-						$objAes->setKey(AppConfig::get('AesKey'));
-						parse_str($objAes->decrypt(base64_decode($_SERVER['QUERY_STRING'])), $_GET);
-					}
-				}
-				
 				AppLoader::includeClass('php/core/', 'CoreApi');
 				$this->objApi = new CoreApi($this->authenticate(), false);
 				list(
@@ -54,7 +44,11 @@
 				
 				$this->display();
 			} catch (Exception $objException) {
-				trigger_error(AppLanguage::translate('Fatal error at runtime'));
+				if (AppConfig::get('ErrorVerbose')) {
+					trigger_error($objException->getBacktrace());
+				} else {
+					trigger_error(AppLanguage::translate('Fatal error at runtime'));
+				}
 				$this->error();
 			}
 		}
@@ -62,14 +56,21 @@
 		
 		/**
 		 * Authenticates a user for the non-public API calls.
-		 * using the server auth vars.
+		 * using the server auth vars. If a session ID was
+		 * passed in the query string that matches the user's
+		 * current session that will also authenticate them.
+		 * The session ID is required so that a malicious
+		 * user can't send an already logged in user to the
+		 * API to do something unauthorized.
 		 *
 		 * @access protected
 		 * @return boolean True if the user was authenticated
 		 */
 		protected function authenticate() {
 			if (!AppConfig::get('ApiInternal', false)) {
-				if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])) {
+				if (!empty($_REQUEST['sid']) && $_REQUEST['sid'] == session_id()) {
+					return true;
+				} else if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])) {
 					AppConfig::set('NoLoginCookie', true);
 					$objUserLogin = AppRegistry::get('UserLogin');
 					if ($objUserLogin->handleFormLogin($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
@@ -99,8 +100,10 @@
 				            . '"; }'
 				;
 			}
-			AppDisplay::getInstance()->setStatusCode($this->intStatusCode ? $this->intStatusCode : 200);
-			AppDisplay::getInstance()->appendString('content', $strContent);
+			
+			$objDisplay = AppDisplay::getInstance();
+			$objDisplay->setStatusCode($this->intStatusCode ? $this->intStatusCode : 200);
+			$objDisplay->appendString('content', $strContent);
 		}
 		
 		
@@ -109,8 +112,13 @@
 		 *
 		 * @access public
 		 * @param integer $intErrorCode The HTTP status code
+		 * @param string $strException The exception to throw
 		 */
-		public function error($intErrorCode = 500) {
+		public function error($intErrorCode = null, $strException = null) {
+			if ($strException) {
+				trigger_error($strException);
+			}
+		
 			AppDisplay::getInstance()->setStatusCode($intErrorCode);
 			AppDisplay::getInstance()->appendString('content', $this->encode(false, array(
 				'errors' => AppRegistry::get('Error')->getErrors()
@@ -138,7 +146,7 @@
 			}
 			
 			$arrResult = array_merge(array(
-				'status'	=> $blnSuccess ? 'success' : 'error'
+				'status' => $blnSuccess ? 'success' : 'error'
 			), $arrResult);
 			
 			if ($arrAlerts = CoreAlert::flushAlerts()) {
@@ -155,13 +163,15 @@
 					break;
 					
 				case 'jsonp':
-					$strEncoded = json_encode($arrResult);
+					AppLoader::includeUtility('JsonHelper');
+					$strEncoded = JsonHelper::encode($arrResult);
 					break;
 					
 				case 'json':
 				default:
 					AppDisplay::getInstance()->appendHeader('Content-type: application/json');
-					$strEncoded = json_encode($arrResult);
+					AppLoader::includeUtility('JsonHelper');
+					$strEncoded = JsonHelper::encode($arrResult);
 					break;
 			}
 			
@@ -169,13 +179,6 @@
 				$strEncoded = preg_replace('/\s{2,}/', ' ', $strEncoded);
 			}
 			
-			if ($this->blnEncryptOutput && class_exists('Crypt_AES', false)) {
-				$objAes = new Crypt_AES();
-				$objAes->setKey(AppConfig::get('AesKey'));
-				$strEncoded = base64_encode($objAes->encrypt($strEncoded));
-			}
-			
-			CoreDebug::debug($strEncoded);
 			return $strEncoded;
 		}	
 	}
