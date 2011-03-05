@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+	<title><?php echo($strPageTitle); ?></title>
+	
+	<?php
+		AppLoader::includeUtility('ConcatHelper');
+		$objConcatHelper = new ConcatHelper();
+		
+		if (!empty($arrStylesheets)) {
+			print $objConcatHelper->css($arrStylesheets, 'screen');
+		}
+	?>
+	
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			font-size: 12px;
+			font-family: Helvetica, Arial, sans-serif;
+			line-height: 20px;
+			letter-spacing: 1.2px;
+			background-color: #FFF;
+			color: #333;
+		}
+		
+		a {
+			color: #333;
+			text-decoration: underline;
+		}
+		
+		.left {
+			float: left;
+		}
+		
+		.right {
+			float: right;
+		}
+		
+		.alert {
+			color: #F00;
+		}
+		
+		#header {
+			width: 100%;
+			height: 30px;
+			background-color: #333;
+			color: #FFF;
+			font-size: 14px;
+			line-height: 30px;
+		}
+		
+		#header div {
+			margin: 0 20px;
+		}
+		
+		#content {
+			width: 600px;
+			margin: 80px auto 0 auto;
+			padding: 5px 30px;
+			background-color: #CCC;
+			border: 1px solid #999;
+		}
+		
+		#footer {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			border-top: 1px dotted #999;
+			font-size: 10px;
+			color: #999;
+		}
+		
+		#footer span {
+			padding: 0 30px;
+		}
+	</style>
+</head>
+
+<body>

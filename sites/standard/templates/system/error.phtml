@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+	<title>Phork - Fatal Error</title>
+	
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="imagetoolbar" content="no" />
+	<meta name="robots" content="noindex" />
+		
+	<style type="text/css">
+		body {
+			padding: 20px 100px;
+			font-family: Helvetica, Arial, sans-serif;
+			font-size: 12px;
+			font-weight: bold;
+			line-height: 15px;
+			letter-spacing: 1.2px;
+			background-color: #FFFFFF;
+		}
+		
+		#error {
+			border: 1px dotted #FF0000;
+			padding: 10px;
+			color: #FF0000;
+		}
+	</style>
+</head>
+
+<body>
+
+<div id="error">
+	<?php
+		if (empty($arrErrors)) {
+			$arrErrors[] = 'There was a fatal error. Please try again later.';
+		}
+		print implode("\n", $arrErrors) . "\n";
+	?>
+</div>
+
+</body>
+</html>

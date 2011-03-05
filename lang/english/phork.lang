@@ -1,0 +1,468 @@
+#generic
+default: Page not found
+replace: Page not found
+
+default: Permission denied
+replace: Permission denied
+
+default: Fatal error
+replace: Fatal error
+
+default: Method %s does not exist
+replace: Method %s does not exist
+
+default: The %s method must be defined in the extension to the %s class
+replace: The %s method must be defined in the extension to the %s class
+
+default: The %s property must be defined in the extension to the %s class
+replace: The %s property must be defined in the extension to the %s class
+
+default: Invalid model
+replace: Invalid model
+
+
+#bootstrap
+default: The controller being registered must implement the Controller interface
+replace: The controller being registered must implement the Controller interface
+
+
+#controller
+default: Invalid property (%s)
+replace: Invalid property (%s)
+
+default: Invalid template path
+replace: Invalid template path
+
+default: Invalid template for the %s node
+replace: Invalid template for the %s node
+
+
+#url
+default: Invalid routes config
+replace: Invalid routes config
+
+
+#display
+default: The headers have already been sent
+replace: The headers have already been sent
+
+
+#ini
+default: Invalid key: %s already exists
+replace: Invalid key: %s already exists
+
+default: Invalid key: %s
+replace: Invalid key: %s
+
+default: Invalid config section: %s
+replace: Invalid config section: %s
+
+
+#error
+default: Error: %s in %s on line %d
+replace: Error: %s in %s on line %d
+
+default: Notice: %s in %s on line %d
+replace: Notice: %s in %s on line %d
+
+default: Warning: %s in %s on line %d
+replace: Warning: %s in %s on line %d
+
+default: Fatal Error: %s in %s on line %d
+replace: Fatal Error: %s in %s on line %d
+
+default: Fatal error - Script terminating
+replace: Fatal error - Script terminating
+
+default: The error group (%s) has already been started
+replace: The error group (%s) has already been started
+
+default: Incorrect error group ended (%s)
+replace: Incorrect error group ended (%s)
+
+
+#alert
+default: In order to set a sticky alert the AlertSessionName config must be defined
+replace: In order to set a sticky alert the AlertSessionName config must be defined
+
+
+#loader
+default: Invalid class: %s
+replace: Invalid class: %s
+
+default: Class include error: %s
+replace: Class include error: %s
+
+default: Invalid class include: %s
+replace: Invalid class include: %s
+
+default: Invalid include path: %s
+replace: Invalid include path: %s
+
+default: File include error: %s
+replace: File include error: %s
+
+default: Invalid file include: %s
+replace: Invalid file include: %s
+
+
+#iterator
+default: Cannot remove non-existant item '%d'
+replace: Cannot remove non-existant item '%d'
+
+default: Cannot modify non-existant item '%d'
+replace: Cannot modify non-existant item '%d'
+
+default: '%s' is not an object
+replace: '%s' is not an object
+
+
+#registry
+default: An object named %s has already been registered
+replace: An object named %s has already been registered
+
+default: Only objects can be added to the registry
+replace: Only objects can be added to the registry
+
+default: The %s object is a reserved object and must implement the %s interface
+replace: The %s object is a reserved object and must implement the %s interface
+
+default: No object named %s has been registered
+replace: No object named %s has been registered
+
+
+#events
+default: No event named %s has been registered
+replace: No event named %s has been registered
+
+
+#static
+default: You cannot construct a static object
+replace: You cannot construct a static object
+
+
+#models
+default: Missing load query
+replace: Missing load query
+
+default: Missing save query
+replace: Missing save query
+
+default: Missing delete query
+replace: Missing delete query
+
+default: A helper named %s has already been registered
+replace: A helper named %s has already been registered
+
+default: Invalid helper class (%s)
+replace: Invalid helper class (%s)
+
+default: The helper object must be an instance of ModelHelper
+replace: The helper object must be an instance of ModelHelper
+
+default: Invalid helper object (%s)
+replace: Invalid helper object (%s)
+
+default: All CoreDatabaseModel objects must have a database table defined
+replace: All CoreDatabaseModel objects must have a database table defined
+
+default: All CoreDatabaseModel objects must have a primary key column defined
+replace: All CoreDatabaseModel objects must have a primary key column defined
+
+default: All CoreDatabaseModel objects must have an array of insertable columns, even if the array is empty
+replace: All CoreDatabaseModel objects must have an array of insertable columns, even if the array is empty
+
+default: All CoreDatabaseModel objects must have an array of updateable columns, even if the array is empty
+replace: All CoreDatabaseModel objects must have an array of updateable columns, even if the array is empty
+
+default: No record set to save
+replace: No record set to save
+
+default: No record set to destroy
+replace: No record set to destroy
+
+default: Missing scaffolding table
+replace: Missing scaffolding table
+
+default: Unable to scaffold the %s table
+replace: Unable to scaffold the %s table
+
+default: The %s method should be passed the CoreModel object as the first argument
+replace: The %s method should be passed the CoreModel object as the first argument
+
+default: Missing a value for %s
+replace: Missing a value for %s
+
+default: Invalid validation method: %s
+replace: Invalid validation method: %s
+
+default: %s is invalid
+replace: %s is invalid
+
+default: %s must be a string
+replace: %s must be a string
+
+default: %s must be in the format %s
+replace: %s must be in the format %s
+
+default: %s must be more than %d characters long
+replace: %s must be more than %d characters long
+
+default: %s must be less than %d characters long
+replace: %s must be less than %d characters long
+
+default: %s must be an integer
+replace: %s must be an integer
+
+default: %s must be greater than %d
+replace: %s must be greater than %d
+
+default: %s must be less than %d
+replace: %s must be less than %d
+
+default: %s must be a float
+replace: %s must be a float
+
+default: %s must be an array
+replace: %s must be an array
+
+default: %s must contain at least %d items
+replace: %s must contain at least %d items
+
+default: %s must contain at most %d items
+replace: %s must contain at most %d items
+
+default: %s must be an object
+replace: %s must be an object
+
+default: %s must be a valid email address
+replace: %s must be a valid email address
+
+default: %s is not a valid email domain
+replace: %s is not a valid email domain
+
+default: %s must be unique
+replace: %s must be unique
+
+
+#database
+default: Invalid read database configuration
+replace: Invalid read database configuration
+
+default: Invalid write database configuration
+replace: Invalid write database configuration
+
+default: Invalid database type
+replace: Invalid database type
+
+default: Invalid database configuration
+replace: Invalid database configuration
+
+default: The %s database extension is not installed
+replace: The %s database extension is not installed
+
+default: No database server available
+replace: No database server available
+
+default: Invalid database resource object
+replace: Invalid database resource object
+
+default: A database connection already exists for %s
+replace: A database connection already exists for %s
+
+default: No database selected
+replace: No database selected
+
+default: Could not connect to the %s database: %s
+replace: Could not connect to the %s database: %s
+
+default: Could not select the database: %s
+replace: Could not select the database: %s
+
+default: Could not perform query: %s
+replace: Could not perform query: %s
+
+default: No database connection
+replace: No database connection
+
+default: Could not commit transaction: %s
+replace: Could not commit transaction: %s
+
+default: Could not roll back transaction: %s
+replace: Could not roll back transaction: %s
+
+default: Invalid sort order
+replace: Invalid sort order
+
+default: Invalid query object - It must be a select query
+replace: Invalid query object - It must be a select query
+
+default: Invalid operator: %s
+replace: Invalid operator: %s
+
+default: Could not escape string
+replace: Could not escape string
+
+default: Only objects that implement the Sql interface can be added to the database manager
+replace: Only objects that implement the Sql interface can be added to the database manager
+
+default: Invalid database object
+replace: Invalid database object
+
+default: No database to revert to
+replace: No database to revert to
+
+
+#cache
+default: Invalid base cache configuration
+replace: Invalid base cache configuration
+
+default: Invalid presentation cache configuration
+replace: Invalid presentation cache configuration
+
+default: Invalid cache type
+replace: Invalid cache type
+
+default: Invalid cache configuration
+replace: Invalid cache configuration
+
+default: The %s cache extension is not installed
+replace: The %s cache extension is not installed
+
+default: No cache servers available
+replace: No cache servers available
+
+default: Invalid cache tier object
+replace: Invalid cache tier object
+
+default: A cache tier already exists for %s
+replace: A cache tier already exists for %s
+
+default: There was an error loading the stats - No servers available
+replace: There was an error loading the stats - No servers available
+
+default: There was an error saving the cache (%s, %s mode)
+replace: There was an error saving the cache (%s, %s mode)
+
+default: There was an error posting the form (1)
+replace: There was an error posting the form (1)
+
+default: There was an error posting the form (2)
+replace: There was an error posting the form (2)
+
+default: There was an error retrieving the form results
+replace: There was an error retrieving the form results
+
+
+#config
+default: Invalid config namespace (%s)
+replace: Invalid config namespace (%s)
+
+default: Invalid config (%s) in namespace %s
+replace: Invalid config (%s) in namespace %s
+
+
+#api
+default: Invalid API method
+replace: Invalid API method
+
+
+#debug
+default: The debugging handlers must implement the DebugHandler interface
+replace: The debugging handlers must implement the DebugHandler interface
+
+default: Invalid debugging handler (%s)
+replace: Invalid debugging handler (%s)
+
+
+#filesystem
+default: There was an error creating the directory %s
+replace: There was an error creating the directory %s
+
+default: There was an error moving the directory %s to %s
+replace: There was an error moving the directory %s to %s
+
+default: The directory to move %s is not a valid directory
+replace: The directory to move %s is not a valid directory
+
+default: There was an error deleting the directory %s
+replace: There was an error deleting the directory %s
+
+default: There was an error changing the permissions of the directory %s
+replace: There was an error changing the permissions of the directory %s
+
+default: There was an error opening the directory %s
+replace: There was an error opening the directory %s
+
+default: There was an error opening the file %s
+replace: There was an error opening the file %s
+
+default: There was an error writing to %s
+replace: There was an error writing to %s
+
+default: There was an error opening the file %s
+replace: There was an error opening the file %s
+
+default: There was an error writing to %s
+replace: There was an error writing to %s
+
+default: There was an error opening the file %s
+replace: There was an error opening the file %s
+
+default: Invalid file to append %s
+replace: Invalid file to append %s
+
+default: There was an error copying the file %s to %s
+replace: There was an error copying the file %s to %s
+
+default: There was an error moving the file %s to %s
+replace: There was an error moving the file %s to %s
+
+default: The file to move %s is not a valid file
+replace: The file to move %s is not a valid file
+
+default: There was an error deleting the file %s
+replace: There was an error deleting the file %s
+
+default: There was an error changing the permissions of the file %s
+replace: There was an error changing the permissions of the file %s
+
+default: Invalid file path
+replace: Invalid file path
+
+default: Invalid temporary directory
+replace: Invalid temporary directory
+
+default: Invalid hash path %s
+replace: Invalid hash path %s
+
+
+#form token hook
+default: Invalid form token. This may have resulted from reloading the page. Please <a href=\"%s\">try again</a>.
+replace: Invalid form token. This may have resulted from reloading the page. Please <a href=\"%s\">try again</a>.
+
+default: Missing form token
+replace: Missing form token
+
+
+#file helper
+default: The filesize exceeds the maximum allowed filesize
+replace: The filesize exceeds the maximum allowed filesize
+
+default: The file was only partially uploaded
+replace: The file was only partially uploaded
+
+default: Invalid temporary directory
+replace: Invalid temporary directory
+
+default: The file was not written to disk
+replace: The file was not written to disk
+
+default: There was an error uploading the file: %s
+replace: There was an error uploading the file: %s
+
+default: Invalid file - It must be an uploaded file
+replace: Invalid file - It must be an uploaded file
+
+default: That file exists already and cannot be overwritten
+replace: That file exists already and cannot be overwritten

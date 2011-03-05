@@ -1,0 +1,41 @@
+<?php
+	//ordinarily these variables should be passed to this template from the controller
+	$strInstallDir = AppConfig::get('InstallDir');
+	$strConfigDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('ConfigDir'));
+	$strTemplateDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('TemplateDir'));
+	$strControllerName = (string) AppRegistry::get('Controller');
+	$strControllerFile = preg_replace("#^{$strInstallDir}#", '', AppLoader::getIncludePath(AppConfig::get('SiteDir') . 'controllers/' . $strControllerName . '.class.php'));
+	$strBaseUrl = AppConfig::get('BaseUrl');
+	
+	$strSiteType = 'standard';
+?>
+
+<div id="header">
+	<div class="left">welcome to phork</div>
+	<div class="right">this is the standard demo</div>
+</div>
+
+<div id="content">
+	<p><em>Unless otherwise noted, all file paths are relative to the install directory of Phork.</em></p>
+	<p>The template used to build this page is <code><?php echo($strTemplateDir); ?>index.phtml</code></p>
+	
+	<p>Additionally, the following templates have been used for the parts of the page shared amongst all pages in the site:</p>
+	<ul>
+		<li><code><?php echo($strTemplateDir); ?>header.phtml</code></li>
+		<li><code><?php echo($strTemplateDir); ?>alerts.phtml</code></li>
+		<li><code><?php echo($strTemplateDir); ?>errors.phtml</code></li>
+		<li><code><?php echo($strTemplateDir); ?>footer.phtml</code></li>
+	</ul>
+	
+	<p>The controller used to build this page is <code><?php echo($strControllerFile); ?></code></p>
+	
+	<p>This uses the <code><?php echo($strControllerName); ?></code> class and the <code>displayIndex()</code> method.</p>
+		
+	<p>You may also access this page at <a href="<?php echo($strBaseUrl); ?>/site/index/">site/index</a>.</p>
+	
+	<p>The configuration files for this site can be found in <code><?php echo($strConfigDir); ?></code>.</p>
+	
+	<?php if (dirname(dirname(__FILE__)) == $strInstallDir . 'sites/' . $strSiteType) { ?>
+	<p class="alert">It is recommended that you make a copy of the <code>sites/<?php echo($strSiteType); ?>/</code> directory, or rename it to something other than <?php echo($strSiteType); ?> (eg. public).</p>
+	<?php } ?>
+</div>
