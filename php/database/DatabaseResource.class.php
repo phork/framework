@@ -32,8 +32,8 @@
 		
 		
 		/**
-		 * The database resource object's constructor. 
-		 * Sets up the connection vars.
+		 * The database resource constructor sets up the
+		 * database connection vars.
 		 *
 		 * @access public
 		 * @param string $strDatabase The database to connect to

@@ -18,10 +18,10 @@
 			background-color: #FFFFFF;
 		}
 		
-		#error {
-			border: 1px dotted #FF0000;
-			padding: 10px;
-			color: #FF0000;
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
 		}
 	</style>
 </head>
@@ -30,11 +30,44 @@
 
 <div id="error">
 	<?php
-		if (empty($arrErrors)) {
-			$arrErrors[] = 'There was a fatal error. Please try again later.';
-		}
-		print implode("\n", $arrErrors) . "\n";
-	?>
+			if (class_exists('AppDisplay')) {
+				switch ($intStatusCode = AppDisplay::getInstance()->getStatusCode()) {
+					case 403:
+						$strByline = 'Permission denied';
+						$arrErrors = array('No touching!');
+						break;
+						
+					case 404:
+						$strByline = 'Page not found';
+						$arrErrors = array('Have we made a huge mistake?');
+						break;
+						
+					default:
+						if (!$objException || !($strByline = $objException->getMessage())) {
+							$strByline = 'System error';
+						}
+						break;
+				}
+			}
+		?>
+	
+		<?php if (!empty($intStatusCode)) { ?>
+		<h1><?php echo($intStatusCode); ?></h1>
+		<?php } else { ?>
+		<h1>Fatal Error</h1>
+		<?php } ?>
+		
+		<?php if (!empty($strByline)) { ?>
+		<h2 class="fancy"><?php echo($strByline); ?></h2>
+		<?php } ?>
+		
+		<?php if (!empty($arrErrors)) { ?>
+		<ul>
+			<?php foreach ($arrErrors as $strError) { ?>
+			<li><?php echo($strError); ?></li>
+			<?php } ?>
+		</ul>
+		<?php } ?>
 </div>
 
 </body>

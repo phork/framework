@@ -29,5 +29,4 @@
 		public function getFilters();
 		public function getFilter($strFilter);
 		public function setRoutes($arrRoutes);
-
 	}

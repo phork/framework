@@ -16,7 +16,7 @@
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-	 * @package phork-standard
+	 * @package phork
 	 * @subpackage controllers
 	 */
 	class ScriptController extends CoreObject implements Controller {
@@ -53,22 +53,27 @@
 		 * be called from the bootstrap for fatal errors.
 		 *
 		 * @access public
-		 * @param integer $intErrorCode The error code to send
+		 * @param integer $intErrorCode The HTTP status code
+		 * @param string $strException The exception to throw
 		 */
-		public function error($intErrorCode = 500) {
-			switch ($intErrorCode) {
-				case 403:
-					trigger_error($strError = AppLanguage::translate('Permission denied'));
-					break;
-					
-				case 404:
-					trigger_error($strError = AppLanguage::translate('Page not found'));
-					break;
-					
-				default:
-					trigger_error($strError = AppLanguage::translate('Fatal error'));
-					break;
+		public function error($intErrorCode = null, $strException = null) {
+			if (!$strException) {
+				switch ($intErrorCode) {
+					case 403:
+						trigger_error($strError = AppLanguage::translate('Permission denied'));
+						break;
+						
+					case 404:
+						trigger_error($strError = AppLanguage::translate('Page not found'));
+						break;
+						
+					default:
+						trigger_error($strError = AppLanguage::translate('Fatal error'));
+						break;
+				}
+				
+				$strException = AppRegistry::get('Error')->getLastError();
 			}
-			throw new CoreException($strError);
+			throw new CoreException($strException);
 		}
 	}

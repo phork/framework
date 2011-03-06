@@ -5,7 +5,7 @@
 	 * Creates and manipulates image data using
 	 * the GD library.
 	 * 
-	 * Copyright 2006-2010, Phork Software. (http://www.phork.org)
+	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License
 	 * Redistributions of files must retain the above copyright notice.

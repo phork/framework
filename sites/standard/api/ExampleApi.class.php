@@ -1,5 +1,5 @@
 <?php
-	require_once('php/core/CoreApi.class.php');
+	require_once('SiteApi.class.php');
 	
 	/**
 	 * ExampleApi.class.php
@@ -11,7 +11,6 @@
 	 * /api/example/featured.json									(GET: featured result)
 	 * /api/example/filter/by=id/[id].json							(GET: results by ID)
 	 * /api/example/filter/by=userid/[user id].json					(GET: results by user ID)
-	 * /api/example/filter/by=foo/[foo].json						(GET: results by another filter)
 	 *
 	 * Additional formatting can be added to determine
 	 * what gets returned in the result.
@@ -19,11 +18,13 @@
 	 * /include=foo/												(include foo)
 	 * /include=bar/												(include bar)
 	 * /include=foo,bar/											(include foo and bar)
+	 * /sort=alphabetical/											(sort the results alphabetically)
+	 * /sort=latest/												(sort with the latest results first)
 	 *
 	 * Internal calls to this can set an additional
 	 * internal flag.
 	 *
-	 * /internal=unpublished,lipsum/								(set the interal unpublished and lipsum flags)
+	 * /internal=unpublished,nocache/								(set the interal unpublished and no cache flags)
 	 *
 	 * The query string options are as follows.
 	 * p=[page num]													(return a specific page of results)
@@ -31,9 +32,8 @@
 	 *
 	 * The following calls require authentication.
 	 *
-	 * /api/example/favorite.json									(GET: favorite results of the user)
 	 * /api/example/add.json										(POST: add a new record)
-	 * /api/example/edit/[id].json									(PUT: edit a record)
+	 * /api/example/edit/[id].json									(POST: edit a record)
 	 * /api/example/delete/[id].json								(DELETE: delete a record by ID)
 	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
@@ -43,10 +43,14 @@
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-	 * @package phork-standard
+	 * @package phork
 	 * @subpackage api
 	 */
-	class ExampleApi extends CoreApi {
+	class ExampleApi extends SiteApi {
+	
+		protected $blnFoo;
+		protected $blnBar;
+		
 	
 		/**
 		 * Maps the API method to a method within this class
@@ -57,7 +61,6 @@
 		 */
 		protected function handle() {
 			$arrHandlers = array(
-				'favorite'		=> 'GetFavorite',
 				'featured'		=> 'GetFeatured',
 				'filter'		=> 'GetFiltered',
 				
@@ -81,19 +84,17 @@
 		 * and sets up the relations helper if necessary.
 		 *
 		 * @access public
-		 * @param boolean $blnFoo Whether to include the foo relations
-		 * @param boolean $blnBar Whether to include the bar relations
 		 * @return object The example model
 		 */
-		public function initModel($blnFoo, $blnBar) {
+		public function initModel() {
 			AppLoader::includeModel('ExampleModel');
 			
 			$arrRelations = array();
-			if ($blnFoo) {
-				$arrRelations[] = 'HasMany.Foo';
+			if ($this->blnFoo) {
+				$arrRelations[] = 'HasMany.Foos';
 			}
-			if ($blnBar) {
-				$arrRelations[] = 'HasMany.Bar';
+			if ($this->blnBar) {
+				$arrRelations[] = 'HasOne.Bar';
 			}
 			
 			$objExample = new ExampleModel(array(
@@ -119,15 +120,68 @@
 		 * @return array The compacted data
 		 */
 		protected function getResultParams() {
-			$intNumResults = !empty($this->arrParams['num']) ? $this->arrParams['num'] : 10;
-			$intPage = !empty($this->arrParams['p']) ? $this->arrParams['p'] : 1;
-			$arrLimit = array('Limit' => $intNumResults, 'Offset' => ($intPage - 1) * $intNumResults);
+			$objUrl = AppRegistry::get('Url');
 			
-			$arrInclude = explode(',', AppRegistry::get('Url')->getFilter('include'));
-			$blnFoo = in_array('foo', $arrInclude);
-			$blnBar = in_array('bar', $arrInclude) && $this->blnAuthenticated;
+			$intNumResults = (int) !empty($this->arrParams['num']) ? $this->arrParams['num'] : 10;
+			$intPage = (int) !empty($this->arrParams['p']) ? $this->arrParams['p'] : 1;
+			$arrFilters = array(
+				'Conditions' => array(),
+				'Limit' => $intNumResults, 
+				'Offset' => ($intPage - 1) * $intNumResults
+			);
 			
-			return compact('arrLimit', 'blnFoo', 'blnBar');
+			if ($strSortBy = $objUrl->getFilter('sort')) {
+				switch ($strSortBy) {
+					case 'alphabetical':
+						$arrFilters['Order'][] = array(
+							'Column'	=> 'name',
+							'Sort'		=> 'ASC'
+						);
+						break;
+						
+					case 'latest':
+						$arrFilters['Order'][] = array(
+							'Column'	=> 'created',
+							'Sort'		=> 'DESC'
+						);
+						break;
+				}
+			}
+			
+			if ($this->blnInternal) {
+				$arrInternal = explode(',', $objUrl->getFilter('internal'));
+				if (in_array('nocache', $arrInternal)) {
+					$this->blnNoCache = true;
+				}
+			} else {
+				$arrInternal = array();
+			}
+			
+			if ($arrInclude = explode(',', $objUrl->getFilter('include'))) {
+				$this->blnFoo = in_array('foo', $arrInclude);
+				$this->blnBar = in_array('bar', $arrInclude);
+			}
+			
+			return compact('arrFilters', 'arrInternal');
+		}
+		
+		
+		/**
+		 * Verifies the parameters from the URL, including the
+		 * maximum number of results allowed.
+		 *
+		 * @access protected
+		 * @return boolean True if valid
+		 */
+		protected function verifyParams() {
+			$blnResult = true;
+			
+			if (!empty($this->arrParams['num']) && $this->arrParams['num'] > ($intMaxResults = 50)) {
+				$blnResult = false;
+				trigger_error(AppLanguage::translate('The maximum number of results allowed is %d', $intMaxResults));
+			}
+			
+			return $blnResult;
 		}
 		
 		
@@ -138,14 +192,12 @@
 		 * @param object $objExampleRecord The record to check
 		 * @return boolean True if the Example is editable
 		 */
-		protected function isEditable($objExampleRecord = null) {
+		protected function isEditable($objExampleRecord) {
 			if ($this->blnAuthenticated) {
-				if ($objExampleRecord) {
-					if ($objExampleRecord->get('userid') == AppRegistry::get('UserLogin')->getUserId()) {
-						return true;
-					} else {
-						trigger_error(AppLanguage::translate('Records can only be edited by their owners'));
-					}
+				if ($objExampleRecord->get('userid') == AppRegistry::get('UserLogin')->getUserId()) {
+					return true;
+				} else {
+					trigger_error(AppLanguage::translate('Records can only be edited by their owners'));
 				}
 			}
 		}
@@ -158,50 +210,39 @@
 		
 		/**
 		 * Gets the featured examples. Defaults to 10 results but
-		 * is configurable.
+		 * is configurable. Cached.
 		 *
 		 * @access protected
 		 */
 		protected function handleGetFeatured() {
-			extract($this->getResultParams());
-			
-			$objExample = $this->initModel($blnFoo, $blnBar);
-			if ($objExample->loadFeatured($arrLimit)) {
-				$this->blnSuccess = true;
-				if ($objExample->count()) {
-					$this->arrResult = array(
-						'records'	=> $this->formatExamples($objExample, $blnFoo, $blnBar),
-						'total'		=> $objExample->getFoundRows()
-					);
-				} else {
-					$this->arrResult = array(
-						'records'	=> array(),
-						'total'		=> 0
-					);
-				}
-			} else {
-				trigger_error(AppLanguage::translate('There was an error loading the example data'));
-				$this->error();
-			}
-		}
-		
-		
-		/**
-		 * Gets the authenticated user's favorite examples.
-		 * Defaults to 10 results but is configurable.
-		 *
-		 * @access protected
-		 */
-		protected function handleGetFavorites() {
-			if ($this->blnAuthenticated) {
+			if ($this->verifyRequest('GET') && $this->verifyParams()) {
 				extract($this->getResultParams());
 				
-				trigger_error(AppLanguage::translate('Favorite results are coming soon'));
-				$this->error();
+				if (!$this->loadFromCache()) {
+					$objExample = $this->initModel();
+					if ($objExample->loadFeatured($arrFilters)) {
+						$this->blnSuccess = true;
+						if ($objExample->count()) {
+							$this->arrResult = array(
+								'examples'	=> $this->formatExamples($objExample),
+								'total'		=> $objExample->getFoundRows()
+							);
+						} else {
+							$this->arrResult = array(
+								'examples'	=> array(),
+								'total'		=> 0
+							);
+						}
+						$this->saveToCache(300);
+					} else {
+						trigger_error(AppLanguage::translate('There was an error loading the example data'));
+						$this->error();
+					}
+				}
 			} else {
-				$this->error(401);
+				$this->error(400);
 			}
-		}	
+		}
 		
 		
 		/**
@@ -211,52 +252,44 @@
 		 * @access protected
 		 */
 		protected function handleGetFiltered() {
-			extract($this->getResultParams());
-			
-			$objUrl = AppRegistry::get('Url');
-			$strFilterBy = $objUrl->getFilter('by');
-			$mxdFilter = str_replace('.' . $this->strFormat, '', $objUrl->getSegment(3));
-			
-			$arrFilters = $arrLimit;
-			if ($this->blnInternal) {
-				$arrInternalFilters = explode(',', $objUrl->getFilter('internal'));
-				if (in_array('unpublished', $arrInternalFilters)) {
-					$arrFilters['AutoFilterOff'] = true;
-				}		
-			}
+			if ($this->verifyRequest('GET') && $this->verifyParams()) {
+				extract($this->getResultParams());
 				
-			$objExample = $this->initModel($blnFoo, $blnBar);
-			switch ($strFilterBy) {
-				case 'id':
-					unset($arrFilters['Limit'], $arrFilters['Offset']);
-					$blnResult = $objExample->loadById($mxdFilter, $arrFilters);
-					break;
-					
-				case 'userid':
-					$blnResult = $objExample->loadByUserId($mxdFilter, $arrFilters);
-					break;
-					
-				case 'foo':
-					$blnResult = $objExample->loadByFoo($mxdFilter, $arrFilters);
-					break;
-			}
-			
-			if ($blnResult) {
-				$this->blnSuccess = true;
-				if ($objExample->count()) {
-					$this->arrResult = array(
-						'records'	=> $this->formatExamples($objExample, $blnFoo, $blnBar),
-						'total'		=> $objExample->getFoundRows()
-					);
+				$objUrl = AppRegistry::get('Url');
+				$strFilterBy = $objUrl->getFilter('by');
+				$mxdFilter = str_replace('.' . $this->strFormat, '', $objUrl->getSegment(3));
+				
+				$objExample = $this->initModel();
+				switch ($strFilterBy) {
+					case 'id':
+						unset($arrFilters['Limit'], $arrFilters['Offset']);
+						$blnResult = $objExample->loadById($mxdFilter, $arrFilters);
+						break;
+						
+					case 'userid':
+						$blnResult = $objExample->loadByUserId($mxdFilter, $arrFilters);
+						break;
+				}
+				
+				if ($blnResult) {
+					$this->blnSuccess = true;
+					if ($objExample->count()) {
+						$this->arrResult = array(
+							'examples'	=> $this->formatExamples($objExample),
+							'total'		=> $objExample->getFoundRows()
+						);
+					} else {
+						$this->arrResult = array(
+							'examples'	=> array(),
+							'total' 	=> 0
+						);
+					}
 				} else {
-					$this->arrResult = array(
-						'records'	=> array(),
-						'total' 	=> 0
-					);
+					trigger_error(AppLanguage::translate('There was an error loading the example data'));
+					$this->error();
 				}
 			} else {
-				trigger_error(AppLanguage::translate('There was an error loading the example data'));
-				$this->error();
+				$this->error(400);
 			}
 		}
 		
@@ -272,32 +305,37 @@
 		 * @access protected
 		 */
 		protected function handleDoAdd() {
-			if ($this->blnAuthenticated) {
-				AppLoader::includeUtility('Sanitizer');
-				if (!($arrUnsanitary = Sanitizer::sanitizeArray($this->arrParams))) {			
-					AppLoader::includeModel('ExampleModel');
-					$objExample = new ExampleModel(array('Validate' => true));
-					$objExample->import(array(
-						'userid'	=> AppRegistry::get('UserLogin')->getUserId(),
-						'baz'		=> !empty($this->arrParams['baz']) ? $this->arrParams['baz'] : null,
-					));
-					
-					if ($objExample->save() && $intId = $objExample->current()->get('__id')) {
-						$this->blnSuccess = true;
-						$this->intStatusCode = 201;
-						$this->arrResult = array(
-							'id' => $intId
-						);
+			if ($this->verifyRequest('POST') && $this->verifyParams()) {
+				if ($this->blnAuthenticated) {
+					AppLoader::includeUtility('Sanitizer');
+					if (!($arrUnsanitary = Sanitizer::sanitizeArray($this->arrParams))) {			
+						AppLoader::includeModel('ExampleModel');
+						$objExample = new ExampleModel(array('Validate' => true));
+						$objExample->import(array(
+							'userid'	=> AppRegistry::get('UserLogin')->getUserId(),
+							'name'		=> !empty($this->arrParams['name']) ? $this->arrParams['name'] : null,
+						));
+						
+						if ($objExample->save() && $intId = $objExample->current()->get('__id')) {
+							$this->blnSuccess = true;
+							$this->intStatusCode = 201;
+							$this->arrResult = array(
+								'id' => $intId
+							);
+						} else {
+							trigger_error(AppLanguage::translate('There was an error adding the example'));
+							$this->error();
+						}
 					} else {
-						trigger_error(AppLanguage::translate('There was an error adding the example'));
-						$this->error();
+						trigger_error(AppLanguage::translate('The following value(s) contain illegal data: %s', implode(', ', array_map('htmlentities', $arrUnsanitary))));
+						$this->error(400);
 					}
 				} else {
-					trigger_error(AppLanguage::translate('The following value(s) contain illegal data: %s', implode(', ', array_map('htmlentities', $arrUnsanitary))));
-					$this->error(400);
+					trigger_error(AppLanguage::translate('Missing or invalid authentication'));
+					$this->error(401);
 				}
 			} else {
-				$this->error(401);
+				$this->error(400);
 			}
 		}
 		
@@ -308,58 +346,88 @@
 		 * @access protected
 		 */
 		protected function handleDoEdit() {
-			if ($this->blnAuthenticated) {
-				AppLoader::includeUtility('Sanitizer');
-				if (!($arrUnsanitary = Sanitizer::sanitizeArray($this->arrParams))) {	
-					$objUrl = AppRegistry::get('Url');		
-					if ($strIdSegment = $objUrl->getSegment(3)) {
-						$intId = str_replace('.' . $this->strFormat, '', $strIdSegment);
-						
-						AppLoader::includeModel('ExampleModel');
-						$objExample = new ExampleModel(array('Validate' => true));
-						if ($objExample->loadById($intId, array('AutoFilterOff' => true)) && $objExampleRecord = $objExample->current()) {
-							if ($this->isEditable($objExampleRecord)) {
-								$objExampleRecord->set('baz', !empty($this->arrParams['baz']) ? $this->arrParams['baz'] : null);
-								
-								if ($objExample->save()) {
-									$this->blnSuccess = true;
-									$this->arrResult = array(
-										'id' => $intId
-									);
-								} else {
-									trigger_error(AppLanguage::translate('There was an error editing the example'));
-									$this->error();
+			if ($this->verifyRequest('POST') && $this->verifyParams()) {
+				if ($this->blnAuthenticated) {
+					AppLoader::includeUtility('Sanitizer');
+					if (!($arrUnsanitary = Sanitizer::sanitizeArray($this->arrParams))) {	
+						$objUrl = AppRegistry::get('Url');		
+						if ($strIdSegment = $objUrl->getSegment(3)) {
+							$intId = str_replace('.' . $this->strFormat, '', $strIdSegment);
+							
+							AppLoader::includeModel('ExampleModel');
+							$objExample = new ExampleModel(array('Validate' => true));
+							if ($objExample->loadById($intId, array('AutoFilterOff' => true)) && $objExampleRecord = $objExample->current()) {
+								if ($this->isEditable($objExampleRecord)) {
+									$objExampleRecord->set('name', !empty($this->arrParams['name']) ? $this->arrParams['name'] : null);
+									
+									if ($objExample->save()) {
+										$this->blnSuccess = true;
+										$this->intStatusCode = 201;
+									} else {
+										trigger_error(AppLanguage::translate('There was an error editing the example'));
+										$this->error();
+									}
 								}
+							} else {
+								trigger_error(AppLanguage::translate('Invalid record ID'));
+								$this->error(400);
 							}
 						} else {
-							trigger_error(AppLanguage::translate('Invalid record ID'));
+							trigger_error(AppLanguage::translate('Missing record ID'));
 							$this->error(400);
 						}
 					} else {
-						trigger_error(AppLanguage::translate('Missing record ID'));
+						trigger_error(AppLanguage::translate('The following value(s) contain illegal data: %s', implode(', ', array_map('htmlentities', $arrUnsanitary))));
 						$this->error(400);
 					}
 				} else {
-					trigger_error(AppLanguage::translate('The following value(s) contain illegal data: %s', implode(', ', array_map('htmlentities', $arrUnsanitary))));
-					$this->error(400);
+					trigger_error(AppLanguage::translate('Missing or invalid authentication'));
+					$this->error(401);
 				}
 			} else {
-				$this->error(401);
+				$this->error(400);
 			}
 		}
 		
 		
 		/**
-		 * Deletes a Example and displays success or failure.
+		 * Deletes an example owned by the authenticated user.
 		 *
 		 * @access protected
 		 */
 		protected function handleDoDelete() {
-			if ($this->blnAuthenticated) {
-				trigger_error(AppLanguage::translate('Delete is coming soon'));
-				$this->error();
+			if ($this->verifyRequest('DELETE') && $this->verifyParams()) {
+				if ($this->blnAuthenticated) {
+					if ($intExampleId = str_replace('.' . $this->strFormat, '', AppRegistry::get('Url')->getSegment(3))) {
+						$objExample = $this->initModel();
+						if ($objExample->loadById($intExampleId) && $objExample->count() == 1) {
+							if ($this->isEditable($objExample->current())) {
+								if ($objExample->destroy()) {
+									CoreAlert::alert('The example was deleted successfully.');
+									$this->blnSuccess = true;
+									$this->intStatusCode = 200;
+								} else {
+									trigger_error(AppLanguage::translate('There was an error deleting the example'));
+									$this->error(400);
+								}
+							} else {
+								trigger_error(AppLanguage::translate('Invalid example permissions'));
+								$this->error(401);
+							}
+						} else {
+							trigger_error(AppLanguage::translate('There was an error loading the example data'));
+							$this->error(400);
+						}
+					} else {
+						trigger_error(AppLanguage::translate('Missing example ID'));
+						$this->error(401);
+					}
+				} else {
+					trigger_error(AppLanguage::translate('Missing or invalid authentication'));
+					$this->error(401);
+				}
 			} else {
-				$this->error(401);
+				$this->error(400);
 			}
 		}
 		
@@ -370,15 +438,13 @@
 		
 		
 		/**
-		 * Formats the records into an array to be encoded.
+		 * Formats the example records into an array to be encoded.
 		 *
 		 * @access protected
 		 * @param object $objExample The list of records to format
-		 * @param boolean $blnFoo Whether to include the foo data
-		 * @param boolean $blnBar Whether to include the bar data
 		 * @return array The results in array format
 		 */
-		protected function formatExample($objExample, $blnFoo, $blnBar) {
+		protected function formatExample($objExample) {
 			$arrResults = array();
 			
 			if ($objExample instanceof CoreIterator) {
@@ -386,14 +452,14 @@
 					$arrResult = array(
 						'id'		=> $objExampleRecord->get('__id'),
 						'userid'	=> $objExampleRecord->get('userid'),
-						'baz'		=> $objExampleRecord->get('baz')
+						'name'		=> $objExampleRecord->get('name')
 					);
 					
-					if ($blnFoo) {
-						$arrResult['foos'] = $this->formatFoo($objExampleRecord->get('foo'));
+					if ($this->blnFoo) {
+						$arrResult['foos'] = $this->formatFoo($objExampleRecord->get('foos'));
 					}
-					if ($blnBar) {
-						$arrResult['bars'] = $this->formatBar($objExampleRecord->get('bar'));
+					if ($this->blnBar) {
+						$arrResult['bar'] = $this->formatBar($objExampleRecord->get('bar'));
 					}
 					
 					$arrResults[] = $arrResult;
@@ -431,24 +497,23 @@
 		
 		
 		/**
-		 * Formats the bar records into an array to be encoded.
+		 * Formats a bar record into an array to be encoded.
 		 *
 		 * @access protected
 		 * @param object $objBar The list of bar records to format
-		 * @return array The bars in array format
+		 * @return array The bar in array format
 		 */
 		protected function formatBar($objBar) {
 			$arrResults = array();
 			
 			if ($objBar instanceof CoreIterator) {
-				while (list(, $objBarRecord) = $objBar->each()) {
-					$arrResults[] = array(
+				if ($objBarRecord = $objBar->first()) {
+					$arrResults = array(
 						'id'	=> $objBarRecord->get('__id'),
 						'bar'	=> $objBarRecord->get('bar'),
 						'car'	=> $objBarRecord->get('car')
 					);
 				}
-				$objBar->rewind();
 			}
 			
 			return $arrResults;
@@ -466,8 +531,8 @@
 		 */
 		public function getXmlNodeName($strNode, $strParentNode) {
 			switch ($strParentNode) {
+				case 'examples':
 				case 'foos':
-				case 'bars':
 					$strNode = substr($strParentNode, 0, -1);
 					break;
 			}

@@ -15,7 +15,7 @@
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-	 * @package phork-standard
+	 * @package phork
 	 * @subpackage controllers
 	 */
 	class ConcatController extends CoreControllerLite {

@@ -7,7 +7,7 @@
 	 * UTF-8 data so this uses Zend's JSON encoding if it's
 	 * available.
 	 *
-	 * Copyright 2006-2010, Phork Software. (http://www.phork.org)
+	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License
 	 * Redistributions of files must retain the above copyright notice.
