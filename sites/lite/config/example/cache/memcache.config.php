@@ -1,5 +1,5 @@
 <?php
-	//the cache type must have a corresponding class
+	//the cache type must have a corresponding class (Memcache or Memcached)
 	$arrConfig['Type'] = 'Memcache';
 	
 	

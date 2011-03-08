@@ -18,8 +18,9 @@
 	$arrConfig['CssUrl'] = '';
 	$arrConfig['JsUrl'] = '';
 	
-	//the url of the front controller excluding the filename if using mod rewrite
-	$arrConfig['BaseUrl'] = '/index.php';
+	//the url of the front controller (no trailing slash) excluding the filename if using mod rewrite
+	//$arrConfig['BaseUrl'] = '';					//mod rewrite enabled
+	$arrConfig['BaseUrl'] = '/index.php';			//no mod rewrite
 	
 	
 	/*******************************************/
@@ -74,7 +75,7 @@
 	);
 	
 	//whether to display the raw CSS and JS
-	$arrConfig['NoConcat'] = false;
+	$arrConfig['NoConcat'] = true;
 	
 	
 	/*******************************************/

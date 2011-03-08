@@ -27,15 +27,6 @@
 	
 	
 	/*******************************************/
-	/**     CACHE KEYS                        **/
-	/*******************************************/
-	
-	
-	//the cache keys for the various API namespaces
-	$arrConfig['DeletedItemCache'] = 'user-deleted:%s:%d';
-	
-	
-	/*******************************************/
 	/**     ERRORS                            **/
 	/*******************************************/
 	
@@ -69,9 +60,6 @@
 	/*******************************************/
 	
 	
-	//the password to use with the encryption utilities
-	$arrConfig['EncryptPassword'] = 'your_encryption_password';
-	
-	//a substition cipher used for basic encryption
+	//a substition cipher used for very basic encryption ($output = str_shuffle($input))
 	$arrConfig['EncryptInput'] = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890=/+';
 	$arrConfig['EncryptOutput'] = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890=/+';

@@ -7,9 +7,6 @@
 	 * The bootstrap sets up the site-wide libs and
 	 * configs and delegates processing to a controller.
 	 *
-	 * This should also require the default controller
-	 * at the top of the file. 
-	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License

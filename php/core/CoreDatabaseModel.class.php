@@ -315,7 +315,7 @@
 		
 		/**
 		 * Returns the query to insert all the loaded records
-		 * in the database. If any record has an ID its ignored.
+		 * in the database. If any record has an ID it's ignored.
 		 *
 		 * @access protected
 		 * @param boolean $blnForceInsert Whether to force insert a record if it has an ID
@@ -357,7 +357,7 @@
 		
 		
 		/**
-		 * Deletes the record(s) from the database by the params
+		 * Deletes the record(s) from the database by the filters
 		 * passed.
 		 *
 		 * The events can pass back two special variables.

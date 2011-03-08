@@ -43,6 +43,7 @@
 		public function setFilesDirectory($strFilesDir);
 		public function getTempDirectory();
 		public function getHashDirectory($strBasePath, $strToHash, $intHashLevel, $blnSkipCheck = false);
+		public function getPublicUrl();
 		
 		public function useTemp();
 		public function clearTemp();

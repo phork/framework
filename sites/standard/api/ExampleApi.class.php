@@ -4,11 +4,11 @@
 	/**
 	 * ExampleApi.class.php
 	 * 
-	 * This class is an example of the API calls. This can
-	 * either be called internally or by URL using the 
-	 * ApiController.
+	 * BECAUSE THIS IS AN EXAMPLE IT USES CLASSES THAT
+	 * DON'T EXIST. INCLUDING THE UserLogin CLASS TO GET
+	 * A USER ID.
 	 *
-	 * /api/example/featured.json									(GET: featured result)
+	 * /api/example/featured.json									(GET: featured results)
 	 * /api/example/filter/by=id/[id].json							(GET: results by ID)
 	 * /api/example/filter/by=userid/[user id].json					(GET: results by user ID)
 	 *
@@ -24,7 +24,7 @@
 	 * Internal calls to this can set an additional
 	 * internal flag.
 	 *
-	 * /internal=unpublished,nocache/								(set the interal unpublished and no cache flags)
+	 * /internal=nocache/											(set the interal no cache flag)
 	 *
 	 * The query string options are as follows.
 	 * p=[page num]													(return a specific page of results)
@@ -98,10 +98,10 @@
 			}
 			
 			$objExample = new ExampleModel(array(
-				'Relations'	 => !empty($arrRelations),
+				'Relations' => $blnRelations = !empty($arrRelations),
 			));
 			
-			if (count($arrRelations)) {
+			if ($blnRelations) {
 				$objExample->initHelper('relations', array('loadSpecific'), array(
 					'Relations' => $arrRelations,
 					'Recursion' => 1
@@ -209,8 +209,8 @@
 		
 		
 		/**
-		 * Gets the featured examples. Defaults to 10 results but
-		 * is configurable. Cached.
+		 * Gets the featured example records. Defaults to a
+		 * maximum of 10 results but is configurable. Cached.
 		 *
 		 * @access protected
 		 */
@@ -246,8 +246,8 @@
 		
 		
 		/**
-		 * Gets the filtered examples. Defaults to 10 results
-		 * but is configurable.
+		 * Gets the filtered example records. Defaults to a
+		 * maximum of 10 results but is configurable. Cached.
 		 *
 		 * @access protected
 		 */
@@ -300,7 +300,7 @@
 		
 		
 		/**
-		 * Adds an example for the authenticated user.
+		 * Adds an example record for the authenticated user.
 		 *
 		 * @access protected
 		 */
@@ -341,7 +341,8 @@
 		
 		
 		/**
-		 * Edits an example by the authenticated user.
+		 * Edits an example record owned by the authenticated
+		 * user.
 		 *
 		 * @access protected
 		 */
@@ -391,7 +392,8 @@
 		
 		
 		/**
-		 * Deletes an example owned by the authenticated user.
+		 * Deletes an example record owned by the authenticated
+		 * user.
 		 *
 		 * @access protected
 		 */

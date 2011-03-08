@@ -2,7 +2,7 @@
 	/**
 	 * Form.class.php
 	 * 
-	 * A class to build form elements.
+	 * Contains a set of methods for building form fields.
 	 * 
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
@@ -15,6 +15,21 @@
 	 * @subpackage utilities
 	 */
 	class Form {	
+		
+		/**
+		 * Adds the various parameters to the form element.
+		 *
+		 * @access protected
+		 * @param string $strForm The form element so far
+		 * @param array $arrParams The parameters to add to the form element
+		 * @static
+		 */
+		static protected function addParams(&$strForm, $arrParams) {
+			foreach ($arrParams as $strParam=>$mxdValue) {
+				$strForm .= $strParam . '="' . $mxdValue . '" ';
+			}
+		}
+		
 		
 		/**
 		 * Returns a checkbox element.
@@ -290,21 +305,6 @@
 			}
 			
 			return $strForm;
-		}
-		
-		
-		/**
-		 * Adds the various parameters to the form element.
-		 *
-		 * @access protected
-		 * @param string $strForm The form element so far
-		 * @param array $arrParams The parameters to add to the form element
-		 * @static
-		 */
-		static protected function addParams(&$strForm, $arrParams) {
-			foreach ($arrParams as $strParam=>$mxdValue) {
-				$strForm .= $strParam . '="' . $mxdValue . '" ';
-			}
 		}
 		
 		

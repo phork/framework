@@ -21,8 +21,8 @@
 		 * Creates and saves the resized image.
 		 *
 		 * @access public
-		 * @param string $strImagePath The path to the image to resized
-		 * @param string $strResizedPath The path to save the resized image to
+		 * @param string $strImagePath The full path to the image being resized
+		 * @param string $strResizedPath The full path to save the new image to
 		 * @param integer $intWidth The resized image width
 		 * @param integer $intHeight The resized image height
 		 * @param boolean $blnSkew Whether to skew the image to fit the dimensions exactly

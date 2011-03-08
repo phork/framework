@@ -25,6 +25,7 @@
 	 */
 	class LocalFileSystemHandler implements FileSystemHandler {
 	
+		protected $strPublicUrl;
 		protected $strFilesDir;
 		protected $strTempDir;
 		protected $blnTemp;
@@ -40,6 +41,7 @@
 		 * @access public
 		 */
 		public function __construct() {
+			$this->strPublicUrl = AppConfig::get('FilesUrl');
 			$this->strFilesDir = AppConfig::get('FilesDir');
 			$this->strTempDir = AppConfig::get('TempDir', false);
 		}
@@ -187,15 +189,9 @@
 		 * @return string The file contents
 		 */
 		public function readFile($strFilePath, $blnSuppress = false) {
-			$strResult = '';
-			if ($rscFile = @fopen($this->cleanPath($strFilePath), 'r')) {
-				while (!feof($rscFile)) {
-					$strResult .= fread($rscFile, 1024);
-				}
-				fclose($rscFile);
-			} else {
+			if (($strResult = file_get_contents($this->cleanPath($strFilePath))) === false) {
 				if (!$blnSuppress) {
-					trigger_error(AppLanguage::translate('There was an error opening the file %s', $strFilePath));
+					trigger_error(AppLanguage::translate('There was an error reading the file %s', $strFilePath));
 				}
 			}
 			return $strResult;
@@ -213,17 +209,12 @@
 		 */
 		public function createFile($strFilePath, $strContents, $intMode = null) {
 			$blnResult = false;
-			if ($rscFile = @fopen($this->cleanPath($strFilePath), 'wb')) {
-				if (fwrite($rscFile, $strContents)) {
-					if ($this->setFilePerms($strFilePath, $intMode)) {
-						$blnResult = true;
-					}
-				} else {
-					trigger_error(AppLanguage::translate('There was an error writing to %s', $strFilePath));
+			if (($intBytes = file_put_contents($this->cleanPath($strFilePath), $strContents)) !== false) {
+				if ($this->setFilePerms($strFilePath, $intMode)) {
+					$blnResult = true;
 				}
-				fclose($rscFile);
 			} else {
-				trigger_error(AppLanguage::translate('There was an error opening the file %s', $strFilePath));
+				trigger_error(AppLanguage::translate('There was an writing to the file %s', $strFilePath));
 			}
 			return $blnResult;
 		}
@@ -237,7 +228,7 @@
 		 * @param string $strContents The contents to write to the temp file
 		 * @return string The name of the temp file excluding the path
 		 */
-		public function createTempFile($strContents) {
+		public function createTempFile($strContents = null) {
 			if ($strFilePath = tempnam($strTempDir = $this->getTempDirectory(), 'phk')) {
 				$strFileName = str_replace($strTempDir, '', $strFilePath);
 				
@@ -246,11 +237,11 @@
 					$this->useTemp();
 				}
 				
-				if (!$this->appendFile($strFileName, $strContents)) {
+				if ($strContents && !$this->appendFile($strFileName, $strContents)) {
 					$strFileName = null;
 				}
 				
-				empty($blnClear) || $this->clearTemp();
+				empty($blnClearTemp) || $this->clearTemp();
 				return $strFileName;
 			}
 		}
@@ -391,8 +382,7 @@
 			if (substr($strPath, 0, strlen($strFilesDir)) == $strFilesDir) {
 				$strPath = substr($strPath, strlen($strFilesDir));
 			}
-			$strStrictPath = $this->realPath($strFilesDir . $strPath);
-			
+			$strStrictPath = $this->realPath($strFilesDir . $strPath);		
 			if (!$this->blnLenient && substr($strStrictPath, 0, strlen($strFilesDir)) != $strFilesDir) {
 				throw new CoreException(AppLanguage::translate('Invalid file path'));
 			}
@@ -487,7 +477,7 @@
 		public function getTempDirectory() {
 			if (!$this->strTempDir) {
 				if (function_exists('sys_get_temp_dir')) {
-					return realpath(sys_get_temp_dir());
+					$this->strTempDir = realpath(sys_get_temp_dir());
 				} else {
 					if (!empty($_ENV['TMP'])) { 
 						$this->strTempDir = realpath($_ENV['TMP']); 
@@ -507,6 +497,10 @@
 			
 			if (!$this->strTempDir) {
 				throw new CoreException(AppLanguage::translate('Invalid temporary directory'));
+			}
+			
+			if (!is_writable($this->strTempDir)) {
+				throw new CoreException(AppLanguage::translate('Unable to write to temporary directory'));
 			}
 			
 			return $this->strTempDir;
@@ -546,6 +540,17 @@
 			}
 			
 			return $strHashPath;
+		}
+		
+		
+		/**
+		 * Returns the URL for public files.
+		 *
+		 * @access public
+		 * @return string The public URL to the file
+		 */
+		public function getPublicUrl() {
+			return $this->strPublicUrl;
 		}
 		
 		

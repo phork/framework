@@ -4,8 +4,8 @@
 	
 	//the database connection for reads
 	$arrConfig['Connections']['Read'] = array(
-		'User'			=> 'your_username',
-		'Password'		=> 'your_password',
+		'User'			=> 'YOUR_USERNAME',
+		'Password'		=> 'YOUR_PASSWORD',
 		'Host'			=> 'localhost',
 		'Port'			=> 3306,
 		'Database'		=> 'phork',
@@ -14,8 +14,8 @@
 	
 	//the database connection for writes
 	$arrConfig['Connections']['Write'] = array(
-		'User'			=> 'your_username',
-		'Password'		=> 'your_password',
+		'User'			=> 'YOUR_USERNAME',
+		'Password'		=> 'YOUR_PASSWORD',
 		'Host'			=> 'localhost',
 		'Port'			=> 3306,
 		'Database'		=> 'phork',

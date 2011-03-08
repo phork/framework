@@ -16,7 +16,7 @@
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
 	 * @package phork
-	 * @subpackage session
+	 * @subpackage sessions
 	 */
 	class SessionDatabase implements SessionHandler {
 		

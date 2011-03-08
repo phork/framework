@@ -3,7 +3,7 @@
 	 * Security.class.php
 	 *
 	 * A utility for handling various security
-	 * procedures. In the future this will use the
+	 * procedures. In the future this will use a
 	 * password for encryption. Currently it just
 	 * uses a translated base 64 encoded string.
 	 *
@@ -16,7 +16,7 @@
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
 	 * @package phork
 	 * @subpackage utilities
-	 * @todo Implement real encryption and decryption using the password
+	 * @todo Implement real encryption and decryption using a password
 	 */
 	class Security {
 	

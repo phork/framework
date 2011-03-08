@@ -12,6 +12,8 @@
 				AppLoader::includeModel($strClassName);
 			} else if (substr($strClassName, -10) == 'Controller') {
 				AppLoader::includeController($strClassName);
+			} else if (substr($strClassName, -3) == 'Api') {
+				AppLoader::includeApi($strClassName);
 			} else if (substr($strClassName, -5) == 'Hooks') {
 				AppLoader::includeHooks($strClassName);
 			}

@@ -1,15 +1,13 @@
 
-<?php	
-	AppLoader::includeUtility('ConcatHelper');
-	$objConcatHelper = new ConcatHelper();
-		
-	if (!empty($arrJavascript)) {
-		print $objConcatHelper->js($arrJavascript);
-	}
-?>
-	
-	
-<div id="footer"><span>load time <[LOAD TIME]> seconds / peak memory usage <[PEAK MEMORY]></span></div>
+		<?php	
+			AppLoader::includeUtility('ConcatHelper');
+			$objConcatHelper = new ConcatHelper();
+				
+			if (!empty($arrJavascript)) {
+				print $objConcatHelper->js($arrJavascript);
+			}
+		?>
 
-</body>
+		<div id="footer"><span>load time <[LOAD TIME]> seconds / peak memory usage <[PEAK MEMORY]></span></div>
+	</body>
 </html>

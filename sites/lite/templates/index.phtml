@@ -1,95 +1,93 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
-<head>
-	<title>Phork - A PHP Framework</title>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Phork - A PHP Framework</title>
+		
+		<style type="text/css">
+			body {
+				margin: 0;
+				padding: 0;
+				font-size: 12px;
+				font-family: Helvetica, Arial, sans-serif;
+				line-height: 20px;
+				letter-spacing: 1.2px;
+				background-color: #FFF;
+				color: #333;
+			}
+			
+			a {
+				color: #333;
+				text-decoration: underline;
+			}
+			
+			.left {
+				float: left;
+			}
+			
+			.right {
+				float: right;
+			}
+			
+			.alert {
+				color: #F00;
+			}
+			
+			#header {
+				width: 100%;
+				height: 30px;
+				background-color: #333;
+				color: #FFF;
+				font-size: 14px;
+				line-height: 30px;
+			}
+			
+			#header div {
+				margin: 0 20px;
+			}
+			
+			#content {
+				width: 600px;
+				margin: 200px auto 0 auto;
+				padding: 5px 30px;
+				background-color: #CCC;
+				border: 1px solid #999;
+			}
+		</style>
+	</head>
 	
-	<style type="text/css">
-		body {
-			margin: 0;
-			padding: 0;
-			font-size: 12px;
-			font-family: Helvetica, Arial, sans-serif;
-			line-height: 20px;
-			letter-spacing: 1.2px;
-			background-color: #FFF;
-			color: #333;
-		}
+	<body>
+		<?php
+			//ordinarily these variables should be passed to this template from the controller
+			$strInstallDir = AppConfig::get('InstallDir');
+			$strConfigDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('ConfigDir'));
+			$strTemplateDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('TemplateDir'));
+			$strControllerName = (string) AppRegistry::get('Controller');
+			$strControllerFile = preg_replace("#^{$strInstallDir}#", '', AppLoader::getIncludePath(AppConfig::get('SiteDir') . 'controllers/' . $strControllerName . '.class.php'));
+			$strBaseUrl = AppConfig::get('BaseUrl');
+			
+			$strSiteType = 'lite';
+		?>
 		
-		a {
-			color: #333;
-			text-decoration: underline;
-		}
+		<div id="header">
+			<div class="left">welcome to phork</div>
+			<div class="right">this is the <?php echo($strSiteType); ?> demo</div>
+		</div>
 		
-		.left {
-			float: left;
-		}
-		
-		.right {
-			float: right;
-		}
-		
-		.alert {
-			color: #F00;
-		}
-		
-		#header {
-			width: 100%;
-			height: 30px;
-			background-color: #333;
-			color: #FFF;
-			font-size: 14px;
-			line-height: 30px;
-		}
-		
-		#header div {
-			margin: 0 20px;
-		}
-		
-		#content {
-			width: 600px;
-			margin: 200px auto 0 auto;
-			padding: 5px 30px;
-			background-color: #CCC;
-			border: 1px solid #999;
-		}
-	</style>
-</head>
-
-<body>
-
-<?php
-	//ordinarily these variables should be passed to this template from the controller
-	$strInstallDir = AppConfig::get('InstallDir');
-	$strConfigDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('ConfigDir'));
-	$strTemplateDir = preg_replace("#^{$strInstallDir}#", '', AppConfig::get('TemplateDir'));
-	$strControllerName = (string) AppRegistry::get('Controller');
-	$strControllerFile = preg_replace("#^{$strInstallDir}#", '', AppLoader::getIncludePath(AppConfig::get('SiteDir') . 'controllers/' . $strControllerName . '.class.php'));
-	$strBaseUrl = AppConfig::get('BaseUrl');
-	
-	$strSiteType = 'lite';
-?>
-
-<div id="header">
-	<div class="left">welcome to phork</div>
-	<div class="right">this is the lite demo</div>
-</div>
-
-<div id="content">
-	<p><em>Unless otherwise noted, all file paths are relative to the install directory of Phork.</em></p>
-	<p>The template used to build this page is <code><?php echo($strTemplateDir); ?>index.phtml</code></p>
-	
-	<p>The controller used to build this page is <code><?php echo($strControllerFile); ?></code></p>
-	
-	<p>This uses the <code><?php echo($strControllerName); ?></code> class and the <code>displayIndex()</code> method.</p>
-		
-	<p>You may also access this page at <a href="<?php echo($strBaseUrl); ?>/site/index/">site/index</a>.</p>
-	
-	<p>The configuration files for this site can be found in <code><?php echo($strConfigDir); ?></code>.</p>
-	
-	<?php if (dirname(dirname(__FILE__)) == $strInstallDir . 'sites/' . $strSiteType) { ?>
-	<p class="alert">It is recommended that you make a copy of the <code>sites/<?php echo($strSiteType); ?>/</code> directory, or rename it to something other than <?php echo($strSiteType); ?> (eg. public).</p>
-	<?php } ?>
-</div>
-
-</body>
+		<div id="content">
+			<p><em>Unless otherwise noted, all file paths are relative to the install directory of Phork.</em></p>
+			<p>The template used to build this page is <code><?php echo($strTemplateDir); ?>index.phtml</code></p>
+			
+			<p>The controller used to build this page is <code><?php echo($strControllerFile); ?></code></p>
+			
+			<p>This uses the <code><?php echo($strControllerName); ?></code> class and the <code>displayIndex()</code> method.</p>
+				
+			<p>You may also access this page at <a href="<?php echo($strBaseUrl); ?>/site/index/">site/index</a>.</p>
+			
+			<p>The configuration files for this site can be found in <code><?php echo($strConfigDir); ?></code>.</p>
+			
+			<?php if (dirname(dirname(__FILE__)) == $strInstallDir . 'sites/' . $strSiteType) { ?>
+			<p class="alert">It is recommended that you make a copy of the <code>sites/<?php echo($strSiteType); ?>/</code> directory, or rename it to something other than <?php echo($strSiteType); ?> (eg. public).</p>
+			<?php } ?>
+		</div>
+	</body>
 </html>

@@ -1,74 +1,72 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
-<head>
-	<title>Phork - Fatal Error</title>
-	
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta http-equiv="imagetoolbar" content="no" />
-	<meta name="robots" content="noindex" />
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>Phork - Fatal Error</title>
 		
-	<style type="text/css">
-		body {
-			padding: 20px 100px;
-			font-family: Helvetica, Arial, sans-serif;
-			font-size: 12px;
-			font-weight: bold;
-			line-height: 15px;
-			letter-spacing: 1.2px;
-			background-color: #FFFFFF;
-		}
-		
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
-	</style>
-</head>
-
-<body>
-
-<div id="error">
-	<?php
-			if (class_exists('AppDisplay')) {
-				switch ($intStatusCode = AppDisplay::getInstance()->getStatusCode()) {
-					case 403:
-						$strByline = 'Permission denied';
-						$arrErrors = array('No touching!');
-						break;
-						
-					case 404:
-						$strByline = 'Page not found';
-						$arrErrors = array('Have we made a huge mistake?');
-						break;
-						
-					default:
-						if (!$objException || !($strByline = $objException->getMessage())) {
-							$strByline = 'System error';
-						}
-						break;
-				}
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta name="robots" content="noindex" />
+			
+		<style type="text/css">
+			body {
+				padding: 20px 100px;
+				font-family: Helvetica, Arial, sans-serif;
+				font-size: 12px;
+				font-weight: bold;
+				line-height: 15px;
+				letter-spacing: 1.2px;
+				background-color: #FFFFFF;
 			}
-		?>
+			
+			ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
 	
-		<?php if (!empty($intStatusCode)) { ?>
-		<h1><?php echo($intStatusCode); ?></h1>
-		<?php } else { ?>
-		<h1>Fatal Error</h1>
-		<?php } ?>
+	<body>
+		<div id="error">
+			<?php
+				if (class_exists('AppDisplay')) {
+					switch ($intStatusCode = AppDisplay::getInstance()->getStatusCode()) {
+						case 403:
+							$strByline = 'Permission denied';
+							$arrErrors = array('No touching!');
+							break;
+							
+						case 404:
+							$strByline = 'Page not found';
+							$arrErrors = array('Have we made a huge mistake?');
+							break;
+							
+						default:
+							if (!$objException || !($strByline = $objException->getMessage())) {
+								$strByline = 'System error';
+							}
+							break;
+					}
+				}
+			?>
 		
-		<?php if (!empty($strByline)) { ?>
-		<h2 class="fancy"><?php echo($strByline); ?></h2>
-		<?php } ?>
-		
-		<?php if (!empty($arrErrors)) { ?>
-		<ul>
-			<?php foreach ($arrErrors as $strError) { ?>
-			<li><?php echo($strError); ?></li>
+			<?php if (!empty($intStatusCode)) { ?>
+			<h1><?php echo($intStatusCode); ?></h1>
+			<?php } else { ?>
+			<h1>Fatal Error</h1>
 			<?php } ?>
-		</ul>
-		<?php } ?>
-</div>
-
-</body>
+			
+			<?php if (!empty($strByline)) { ?>
+			<h2 class="fancy"><?php echo($strByline); ?></h2>
+			<?php } ?>
+			
+			<?php if (!empty($arrErrors)) { ?>
+			<ul>
+				<?php foreach ($arrErrors as $strError) { ?>
+				<li><?php echo($strError); ?></li>
+				<?php } ?>
+			</ul>
+			<?php } ?>
+		</div>
+	</body>
 </html>

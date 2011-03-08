@@ -142,8 +142,8 @@ replace: There was an error posting the form (2)
 default: The helper object must be an instance of ModelHelper
 replace: The helper object must be an instance of ModelHelper
 
-default: There was an error deleting the file %sPath
-replace: There was an error deleting the file %sPath
+default: There was an error deleting the file %s
+replace: There was an error deleting the file %s
 
 default: Could not perform query: %s
 replace: Could not perform query: %s
@@ -154,8 +154,8 @@ replace: Class include error: %s
 default: Notice: %s in %s on line %d
 replace: Notice: %s in %s on line %d
 
-default: There was an error opening the file %sPath
-replace: There was an error opening the file %sPath
+default: There was an error opening the file %s
+replace: There was an error opening the file %s
 
 default: Invalid model
 replace: Invalid model
@@ -166,8 +166,8 @@ replace: Invalid operator: %s
 default: Invalid API batch definitions
 replace: Invalid API batch definitions
 
-default: Invalid file to append %sPath
-replace: Invalid file to append %sPath
+default: Invalid file to append %s
+replace: Invalid file to append %s
 
 default: Page not found
 replace: Page not found
@@ -193,8 +193,8 @@ replace: Invalid cache type
 default: Cannot modify non-existant item '%d'
 replace: Cannot modify non-existant item '%d'
 
-default: There was an error copying the file %s to %sPath
-replace: There was an error copying the file %s to %sPath
+default: There was an error copying the file %s to %s
+replace: There was an error copying the file %s to %s
 
 default: The directory to move %s is not a valid directory
 replace: The directory to move %s is not a valid directory
@@ -208,11 +208,14 @@ replace: Invalid API method
 default: '%s' is not an object
 replace: '%s' is not an object
 
-default: There was an error moving the file %s to %sPath
-replace: There was an error moving the file %s to %sPath
+default: There was an error moving the file %s to %s
+replace: There was an error moving the file %s to %s
 
-default: There was an error writing to %sPath
-replace: There was an error writing to %sPath
+default: There was an error reading the file %s
+replace: There was an error reading the file %s
+
+default: There was an error writing to the file %s
+replace: There was an error writing to the file %s
 
 default: All CoreDatabaseModel objects must have an array of insertable columns, even if the array is empty
 replace: All CoreDatabaseModel objects must have an array of insertable columns, even if the array is empty
@@ -277,8 +280,8 @@ replace: No database selected
 default: All CoreDatabaseModel objects must have an array of updateable columns, even if the array is empty
 replace: All CoreDatabaseModel objects must have an array of updateable columns, even if the array is empty
 
-default: Could not connect to the %s database: %s
-replace: Could not connect to the %s database: %s
+default: Could not connect to the %s database
+replace: Could not connect to the %s database
 
 default: There was an error creating the resized image
 replace: There was an error creating the resized image
@@ -301,8 +304,8 @@ replace: Invalid presentation cache configuration
 default: The headers have already been sent
 replace: The headers have already been sent
 
-default: There was an error changing the permissions of the file %sPath
-replace: There was an error changing the permissions of the file %sPath
+default: There was an error changing the permissions of the file %s
+replace: There was an error changing the permissions of the file %s
 
 default: Invalid debug file
 replace: Invalid debug file

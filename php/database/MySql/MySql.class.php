@@ -53,20 +53,18 @@
 				if (empty($this->objActive->strDatabase)) {
 					throw new CoreException(AppLanguage::translate('No database selected'));
 				}
-					
+				
 				$strFunction = $this->objActive->blnPersistent ? 'mysql_pconnect' : 'mysql_connect';
 				if ($this->objActive->rscDb = $strFunction($this->objActive->strHost . ($this->objActive->intPort ? ':' . $this->objActive->intPort : ''), $this->objActive->strUser, $this->objActive->strPassword)) {
 					if ($this->selectDatabase()) {
 						$this->objActive->blnConnected = true;
 					}
 					$this->groupConnections();
+				} else {
+					trigger_error(AppLanguage::translate('Could not connect to the %s database', $this->strActive));
 				}
 			}
 		
-			if (!$this->objActive->blnConnected) {
-				trigger_error(AppLanguage::translate('Could not connect to the %s database: %s', $this->strActive, $this->getError()));
-			}
-			
 			return $this->objActive->blnConnected;
 		}
 		
