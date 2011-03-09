@@ -1,7 +1,7 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
-	require_once('php/database/DatabaseResource.class.php');
-	require_once('php/database/interfaces/Sql.interface.php');
+	require_once('DatabaseResource.class.php');
+	require_once('interfaces/Sql.interface.php');
 	
 	/**
 	 * DatabaseAdaptor.class.php

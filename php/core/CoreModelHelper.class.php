@@ -1,6 +1,6 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
-	require_once('php/core/interfaces/ModelHelper.interface.php');
+	require_once('interfaces/ModelHelper.interface.php');
 	
 	/**
 	 * CoreModelHelper.class.php

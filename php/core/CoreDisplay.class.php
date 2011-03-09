@@ -1,6 +1,6 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
-	require_once('php/core/interfaces/Singleton.interface.php');
+	require_once('interfaces/Singleton.interface.php');
 	
 	/**
 	 * CoreDisplay.class.php

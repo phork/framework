@@ -4,7 +4,7 @@
 	 *
 	 * The interface for the parser classes to implement.
 	 *
-	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
+	 * Copyright 2006-2010, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License
 	 * Redistributions of files must retain the above copyright notice.
@@ -16,8 +16,7 @@
 	 */
 	interface Parser {
 	
-		public function loadConfigString($strConfig);
-		public function loadConfigFile($strFilePath);
-		public function getConfig();
-		public function getConfigSection($strSection, $blnRequired = false);
+		public function loadFromString($strOriginal);
+		public function loadFromFile($strFilePath);
+		public function getParsed();
 	}

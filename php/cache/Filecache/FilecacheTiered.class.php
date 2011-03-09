@@ -78,7 +78,7 @@
 			}
 			
 			if (!$this->objActive->blnConnected) {
-				if (AppLoader::includeExtension('files/', $strFileSystem = $this->objActive->arrConfig['FileSystem'] . 'FileSystemHandler')) {
+				if (AppLoader::includeExtension('files/', $strFileSystem = $this->objActive->arrConfig['FileSystem'] . 'FileSystem')) {
 					$this->objActive->objCache = new $strFileSystem();
 					$this->objActive->blnConnected = true;
 				}
@@ -187,24 +187,25 @@
 		 * @return mixed The retrieved data or null on failure
 		 */
 		public function load($strKey) {
+			$mxdResult = null;
+			
 			if (($strKey = $this->cleanKey($strKey)) && ($strKeyPath = $this->getKeyPath($strKey))) {
 				CoreDebug::debug($this, "Load {$strKey}");
 				
 				if ($this->checkTier()) {
-					$mxdResult = $this->objActive->objCache->readFile($strKeyPath, true);
-					if ($mxdResult) {
-						if (($mxdResult = $this->unpack($mxdResult, $intExpire)) === null) {
-							$this->objActive->objCache->deleteFile($strKeyPath, true);
+					if ($this->objActive->objCache->isFile($strKeyPath)) {
+						$mxdResult = $this->objActive->objCache->readFile($strKeyPath, true);
+						if ($mxdResult) {
+							if (($mxdResult = $this->unpack($mxdResult, $intExpire)) === null) {
+								$this->objActive->objCache->deleteFile($strKeyPath, true);
+							}
 						}
 					}
-				} else {
-					$mxdResult = null;
 				}
-				
-				CoreDebug::debug($this, ($mxdResult ? 'Hit' : 'Miss'));
-				
-				return $mxdResult;
-			}
+			}		
+			
+			CoreDebug::debug($this, ($mxdResult ? 'Hit' : 'Miss'));
+			return $mxdResult;
 		}
 		
 		

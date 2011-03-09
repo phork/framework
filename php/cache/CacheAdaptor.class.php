@@ -1,7 +1,7 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
 	require_once('php/cache/CacheTier.class.php');
-	require_once('php/cache/interfaces/Cache.interface.php');
+	require_once('interfaces/Cache.interface.php');
 	
 	/**
 	 * CacheAdaptor.class.php

@@ -1,8 +1,8 @@
 <?php
-	require_once('php/core/interfaces/FileSystemHandler.interface.php');
+	require_once('interfaces/FileSystemHandler.interface.php');
 	
 	/**
-	 * LocalFileSystemHandler.interface.php
+	 * LocalFileSystem.class.php
 	 *
 	 * The local file system functions. All the file
 	 * and directory operations take place in the files
@@ -23,7 +23,7 @@
 	 * @package phork
 	 * @subpackage files
 	 */
-	class LocalFileSystemHandler implements FileSystemHandler {
+	class LocalFileSystem implements FileSystemHandler {
 	
 		protected $strPublicUrl;
 		protected $strFilesDir;

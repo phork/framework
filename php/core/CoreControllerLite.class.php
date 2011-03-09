@@ -1,6 +1,6 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
-	require_once('php/core/interfaces/Controller.interface.php');
+	require_once('interfaces/Controller.interface.php');
 	
 	/**
 	 * CoreControllerLite.class.php

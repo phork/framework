@@ -1,8 +1,8 @@
 <?php
-	require_once('php/ext/files/LocalFileSystemHandler.class.php');
+	require_once('LocalFileSystem.class.php');
 
 	/**
-	 * AmazonS3FileSystemHandler.interface.php
+	 * AmazonS3FileSystem.class.php
 	 *
 	 * The Amazon S3 file system functions. This requires the
 	 * Zend Framework.
@@ -17,7 +17,7 @@
 	 * @package phork
 	 * @subpackage files
 	 */
-	class AmazonS3FileSystemHandler extends LocalFileSystemHandler {
+	class AmazonS3FileSystem extends LocalFileSystem {
 	
 		protected $objS3;
 				

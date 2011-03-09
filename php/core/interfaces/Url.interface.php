@@ -18,9 +18,11 @@
 	
 		public function init();
 		public function getUrl();
+		public function setUrl($strUrl);
 		public function getCompleteUrl();
 		public function getBaseUrl();
 		public function setBaseUrl($strBaseUrl);
+		public function setRoutedUrl($strRoutedUrl);
 		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = true);
 		public function getExtension();
 		public function getSegments();

@@ -8,7 +8,7 @@ by Phork Labs
 Introduction
 ------------
 
-Phork is a lightweight Open Source PHP 5 framework that provides a solid foundation for developing robust applications. Phork is an object oriented MVC (Model View Controller) framework and includes an Active Record ORM with automatic relationship loading, as well as the ability to register events to run before and after loading, saving and deleting records. Phork also includes an API framework, URL routing, page caching, template caching, a flexible debugging system, optional language translations, and several useful utilities and extensions.
+Phork is a flexible Open Source PHP 5 framework that provides a solid foundation for developing robust applications. Phork is an object oriented MVC (Model View Controller) framework and includes an Active Record ORM with automatic relationship loading, as well as the ability to register events to run before and after loading, saving and deleting records. Phork also includes an API framework, URL routing, page caching, template caching, a flexible debugging system, model scaffolding, optional language translations, and several useful utilities and extensions.
 
 
 Quick Start

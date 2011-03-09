@@ -1,5 +1,5 @@
 <?php
-	require_once('php/core/interfaces/Parser.interface.php');
+	require_once('interfaces/Parser.interface.php');
 
 	/**
 	 * IniParser.class.php
@@ -49,16 +49,16 @@
 		 * @param string $strConfig The config data to parse
 		 * @return boolean True if loaded
 		 */
-		public function loadConfigString($strConfig) {
+		public function loadFromString($strConfig) {
 			if (function_exists('parse_ini_string')) {
 				$this->arrConfigRaw = parse_ini_string($strConfig, true);
 			} else {
-				AppLoader::includeExtension('files/', 'LocalFileSystemHandler');
-				$objFileSystem = new LocalFileSystemHandler();
+				AppLoader::includeExtension('files/', 'LocalFileSystem');
+				$objFileSystem = new LocalFileSystem();
 				$strTempDir = $objFileSystem->useTemp();
 				
 				if ($strFileName = $objFileSystem->createTempFile($strConfig)) {
-					$this->loadConfigFile($strTempDir . $strFileName);
+					$this->loadFromFile($strTempDir . $strFileName);
 					$objFileSystem->deleteFile($strFileName, true);
 				}
 				unset($objFileSystem);
@@ -74,7 +74,7 @@
 		 * @param string $strFilePath The filepath to the config
 		 * @return boolean True if loaded
 		 */
-		public function loadConfigFile($strFilePath) {
+		public function loadFromFile($strFilePath) {
 			$this->arrConfigRaw = parse_ini_file($strFilePath, true);
 			return !empty($this->arrConfigRaw);
 		}
@@ -83,6 +83,18 @@
 		/*****************************************/
 		/**     PROCESS METHODS                 **/
 		/*****************************************/
+		
+		
+		/**
+		 * Processes all of the config data.
+		 *
+		 * @access protected
+		 */
+		protected function process() {
+			foreach (array_keys($this->arrConfigRaw) as $strSection) {
+				$this->processSection($strSection);
+			}
+		}
 		
 		
 		/**
@@ -116,25 +128,13 @@
 		
 		
 		/**
-		 * Processes all of the config data.
-		 *
-		 * @access protected
-		 */
-		protected function processConfig() {
-			foreach (array_keys($this->arrConfigRaw) as $strSection) {
-				$this->processConfigSection($strSection);
-			}
-		}
-		
-		
-		/**
 		 * Processes a section of the config data.
 		 *
 		 * @access protected
 		 * @param array $strSection The section of config data to process
 		 * @return boolean True on success
 		 */
-		protected function processConfigSection($strSection) {
+		protected function processSection($strSection) {
 			if (!empty($this->arrConfigRaw[$strSection])) {
 				$arrResult = array();
 				
@@ -156,18 +156,6 @@
 		
 		
 		/**
-		 * Returns the processed configuration.
-		 *
-		 * @access public
-		 * @return array The configuration data, if successful
-		 */
-		public function getConfig() {
-			$this->processConfig();
-			return $this->arrConfig;
-		}
-		
-		
-		/**
 		 * Returns the processed configuration for the section.
 		 *
 		 * @access public
@@ -175,10 +163,10 @@
 		 * @param boolean $blnRequired Whether the config is required to be defined
 		 * @return array The configuration data, if successful
 		 */
-		public function getConfigSection($strSection, $blnRequired = false) {
+		public function getParsedSection($strSection, $blnRequired = false) {
 			if (!isset($this->arrConfig[$strSection])) {
 				if (isset($this->arrConfigRaw[$strSection])) {
-					if (!$this->processConfigSection($strSection)) {
+					if (!$this->processSection($strSection)) {
 						return false;
 					}
 				} else if ($blnRequired == true) {
@@ -189,5 +177,17 @@
 			if (isset($this->arrConfig[$strSection])) {
 				return $this->arrConfig[$strSection];
 			}
+		}
+		
+		
+		/**
+		 * Returns the processed configuration.
+		 *
+		 * @access public
+		 * @return array The configuration data, if successful
+		 */
+		public function getParsed() {
+			$this->process();
+			return $this->arrConfig;
 		}
 	}

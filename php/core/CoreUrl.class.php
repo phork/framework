@@ -1,7 +1,7 @@
 <?php
 	require_once('php/core/CoreObject.class.php');
-	require_once('php/core/interfaces/Singleton.interface.php');
-	require_once('php/core/interfaces/Url.interface.php');
+	require_once('interfaces/Singleton.interface.php');
+	require_once('interfaces/Url.interface.php');
 
 	/**
 	 * CoreUrl.class.php
