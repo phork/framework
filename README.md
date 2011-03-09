@@ -20,7 +20,7 @@ Quick Start
 
 3.  Recursively copy either phork/sites/lite/ or phork/sites/standard/ to phork/sites/public/.
 
-4.  Copy the example configuration files from phork/sites/public/config/example/ to phork/sites/public/config/live/ (exclude the config folder).
+4.  Copy the example configuration files from phork/sites/public/config/example/ to phork/sites/public/config/live/.
 
 5.  Edit the configuration files in phork/sites/public/config/live/.
 
