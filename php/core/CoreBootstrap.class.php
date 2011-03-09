@@ -367,11 +367,16 @@
 				AppLoader::includeController($this->strController);
 				return $this->registerController(new $this->strController(), $blnOverwrite);
 			} catch (CoreException $objException) {
+				$objDisplay = AppDisplay::getInstance();
+				if (!($intStatusCode = $objDisplay->getStatusCode())) {
+					$intStatusCode = 404;
+				}
+				
 				if (AppConfig::get('ErrorVerbose')) {
-					AppDisplay::getInstance()->setStatusCode(404);
+					AppDisplay::getInstance()->setStatusCode($intStatusCode);
 					$objException->handleException();
 				} else {
-					$this->fatal(404);
+					$this->fatal($intStatusCode);
 				}
 			}
 		}

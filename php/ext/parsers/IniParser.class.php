@@ -49,7 +49,7 @@
 		 * @param string $strConfig The config data to parse
 		 * @return boolean True if loaded
 		 */
-		public function loadFromString($strConfig) {
+		public function load($strConfig) {
 			if (function_exists('parse_ini_string')) {
 				$this->arrConfigRaw = parse_ini_string($strConfig, true);
 			} else {

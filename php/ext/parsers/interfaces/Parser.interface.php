@@ -12,11 +12,11 @@
 	 * @author Elenor Collings <elenor@phork.org>
 	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
 	 * @package phork
-	 * @subpackage core
+	 * @subpackage parsers
 	 */
 	interface Parser {
 	
-		public function loadFromString($strOriginal);
+		public function load($mxdData);
 		public function loadFromFile($strFilePath);
 		public function getParsed();
 	}
