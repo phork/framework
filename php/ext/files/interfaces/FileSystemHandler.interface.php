@@ -30,7 +30,7 @@
 		public function isFile($strFilePath, $blnTemp = false);
 		public function readFile($strFilePath, $blnSuppress = false);
 		public function createFile($strFilePath, $strContents, $intMode = null);
-		public function createTempFile($strContents);
+		public function createTempFile($strContents = null);
 		public function appendFile($strFilePath, $strContents);
 		public function copyFile($strFilePath, $strDestination, $blnFromTemp = false);
 		public function moveFile($strFilePath, $strDestination, $blnFromTemp = false);
