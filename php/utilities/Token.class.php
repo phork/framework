@@ -3,7 +3,7 @@
 	 * Token.class.php
 	 * 
 	 * A class for setting and checking a form token
-	 * to verify that the post data isn't being spoofed.
+	 * to verify that the data isn't being spoofed.
 	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
@@ -22,18 +22,16 @@
 		 * and that it's a valid one.
 		 *
 		 * @access public
-		 * @param boolean $blnGet Token submitted via a GET request instead of POST
 		 * @return boolean True if the token exists and is valid
 		 * @static
 		 */
-		static public function verifyRequest($blnGet = false) {
+		static public function verifyRequest() {
 			if (!AppConfig::get('TokenIgnore', false)) {
 				$strTokenField = AppConfig::get('TokenField');
-				$arrRequest = ($blnGet ? $_GET : $_POST);
 				
-				if (!empty($arrRequest)) {
-					if (!empty($arrRequest[$strTokenField])) {
-						if (!self::validateToken($arrRequest[$strTokenField])) {
+				if (!empty($_REQUEST)) {
+					if (!empty($_REQUEST[$strTokenField])) {
+						if (!self::validateToken($_REQUEST[$strTokenField])) {
 							trigger_error(AppLanguage::translate('Invalid form token. This may have resulted from reloading the page. Please <a href="%s">try again</a>.', AppRegistry::get('Url')->getCurrentUrl()));
 							return false;
 						}
@@ -81,19 +79,18 @@
 		 * This is useful when an AJAX request fails.
 		 *
 		 * @access public
-		 * @param boolean $blnGet Token submitted via a GET request instead of POST
-		 * @return string The token
+		 * @return boolean True on success
 		 * @static
 		 */
-		static public function reviveToken($blnGet = false) {
+		static public function reviveToken() {
 			$strSessionName = AppConfig::get('TokenSessionName');
 			$strTokenField = AppConfig::get('TokenField');
-			$arrRequest = ($blnGet ? $_GET : $_POST);
 			
-			if (!empty($arrRequest)) {
-				if (!empty($arrRequest[$strTokenField])) {
-					$strToken = $arrRequest[$strTokenField];
+			if (!empty($_REQUEST)) {
+				if (!empty($_REQUEST[$strTokenField])) {
+					$strToken = $_REQUEST[$strTokenField];
 					$_SESSION[$strSessionName][$strToken] = time();
+					return true;
 				} else {
 					trigger_error(AppLanguage::translate('Missing form token'));
 					return false;

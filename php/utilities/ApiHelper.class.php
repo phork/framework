@@ -210,10 +210,11 @@
 		 * @param string $mxdArgs The URL (and optionally POST data) to retrieve the results from
 		 * @param string $strNode The result node to return
 		 * @param boolean $blnSingle If this flag is set only the first result will be returned
+		 * @param boolean $blnInternal Whether special internal methods are allowed
 		 * @return mixed The result node
 		 * @static
 		 */
-		static public function getResultNode($mxdArgs, $strNode, $blnSingle = false) {
+		static public function getResultNode($mxdArgs, $strNode, $blnSingle = false, $blnInternal = true) {
 			if ($blnPost = is_array($mxdArgs)) {
 				list($strUrl, $arrPost) = $mxdArgs;
 			} else {
@@ -224,9 +225,9 @@
 			switch (substr($strBaseUrl, strrpos($strBaseUrl, '.') + 1)) {
 				case 'json':
 					if ($blnPost) {
-						list($blnSuccess, $arrResult) = self::post($strUrl, $arrPost);
+						list($blnSuccess, $arrResult) = self::post($strUrl, $arrPost, $blnInternal);
 					} else {
-						list($blnSuccess, $arrResult) = self::get($strUrl);
+						list($blnSuccess, $arrResult) = self::get($strUrl, $blnInternal);
 					}
 					break;
 					
@@ -258,10 +259,11 @@
 		 * @param string $mxdArgs The URL (and optionally POST data) to retrieve the results from
 		 * @param array $arrNodes The result nodes to return
 		 * @param boolean $blnAssociative Whether to return an associative array
+		 * @param boolean $blnInternal Whether special internal methods are allowed
 		 * @return array The result nodes
 		 * @static
 		 */
-		static public function getResultNodes($mxdArgs, $arrNodes, $blnAssociative = true) {
+		static public function getResultNodes($mxdArgs, $arrNodes, $blnAssociative = true, $blnInternal = true) {
 			if ($blnPost = is_array($mxdArgs)) {
 				list($strUrl, $arrPost) = $mxdArgs;
 			} else {
@@ -272,9 +274,9 @@
 			switch (substr($strBaseUrl, strrpos($strBaseUrl, '.') + 1)) {
 				case 'json':
 					if ($blnPost) {
-						list($blnSuccess, $arrResult) = self::post($strUrl, $arrPost);
+						list($blnSuccess, $arrResult) = self::post($strUrl, $arrPost, $blnInternal);
 					} else {
-						list($blnSuccess, $arrResult) = self::get($strUrl);
+						list($blnSuccess, $arrResult) = self::get($strUrl, $blnInternal);
 					}
 					break;
 					
