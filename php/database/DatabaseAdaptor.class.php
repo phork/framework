@@ -379,13 +379,25 @@
 		
 		
 		/**
-		 * Fetches the row as an associative array.
+		 * Fetches the row as a numeric array.
 		 *
 		 * @access public
 		 * @param object $objResult The result object
 		 * @return array The result array, or null
 		 */
 		public function fetchRow($objResult) {
+			throw new CoreException(AppLanguage::translate('The %s method must be defined in the extension to the %s class', __METHOD__, __CLASS__));
+		}
+		
+		
+		/**
+		 * Fetches the row as an associative array.
+		 *
+		 * @access public
+		 * @param object $objResult The result object
+		 * @return array The result array, or null
+		 */
+		public function fetchRowAssoc($objResult) {
 			throw new CoreException(AppLanguage::translate('The %s method must be defined in the extension to the %s class', __METHOD__, __CLASS__));
 		}
 		
@@ -399,7 +411,7 @@
 		 * @return mixed The column data
 		 */
 		public function fetchRowColumn($objResult, $strColumn) {
-			if ($arrRow = $this->fetchRow($objResult)) {
+			if ($arrRow = $this->fetchRowAssoc($objResult)) {
 				if (isset($arrRow[$strColumn])) {
 					return $arrRow[$strColumn];
 				}

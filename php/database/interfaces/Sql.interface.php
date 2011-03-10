@@ -31,6 +31,7 @@
 		public function getAffectedRows();
 		public function getNumRows($mxdParam);
 		public function fetchRow($mxdParam);
+		public function fetchRowAssoc($mxdParam);
 		public function fetchRowObject($mxdParam);
 		public function fetchRowColumn($mxdParam, $strColumn);
 		public function freeResult($mxdParam);

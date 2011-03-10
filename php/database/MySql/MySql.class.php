@@ -195,13 +195,25 @@
 		
 		
 		/**
-		 * Fetches the row as an associative array.
+		 * Fetches the row as a numeric array.
 		 *
 		 * @access public
 		 * @param object $objResult The result object
 		 * @return array The result array, or null
 		 */
 		public function fetchRow($objResult) {
+			return mysql_fetch_row($objResult);
+		}
+		
+		
+		/**
+		 * Fetches the row as an associative array.
+		 *
+		 * @access public
+		 * @param object $objResult The result object
+		 * @return array The result array, or null
+		 */
+		public function fetchRowAssoc($objResult) {
 			return mysql_fetch_assoc($objResult);
 		}
 		
