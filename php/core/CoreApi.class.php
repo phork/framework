@@ -222,7 +222,7 @@
 					
 					$this->blnSuccess = true;
 					$this->arrResult = array(
-						'batched' => $arrResult
+						'batched' => isset($arrResult) ? $arrResult : array()
 					);
 				} else {
 					trigger_error(AppLanguage::translate('Invalid API batch definitions'));

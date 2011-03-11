@@ -369,7 +369,7 @@
 			$strQuery = "SHOW COLUMNS FROM " . $this->escapeString($strTable);
 			if ($mxdResult = $this->read($strQuery)) {
 				$arrResult = array();
-				while ($arrRow = $this->fetchRow($mxdResult)) {
+				while ($arrRow = $this->fetchRowAssoc($mxdResult)) {
 					$intLength = $arrOptions = $strType = null;
 					if (preg_match('/(.*)\((.+)\)/', $arrRow['Type'], $arrMatches)) {
 						$strType = $arrMatches[1];
