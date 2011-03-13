@@ -31,7 +31,9 @@
 		 */
 		public function __construct() {
 			AppLoader::includeExtension('zend/', 'ZendLoader');
-	 		ZendLoader::includeClass('Zend_Service_Amazon_S3');
+			if (!ZendLoader::isAvailable()) {
+				throw new CoreException(AppLanguage::translate('Missing Zend Framework and its %s class', 'Zend_Service_Amazon_S3'));
+			}
 			
 			if (!AppConfig::get('S3AccessKey', false) || !AppConfig::get('S3SecretKey', false)) {
 				AppConfig::load('amazon');
@@ -40,6 +42,7 @@
 			$this->strFilesDir = AppConfig::get('S3FolderRoot');
 			$this->strPublicUrl = AppConfig::get('S3FilesUrl', false);
 			
+			ZendLoader::includeClass('Zend_Service_Amazon_S3');
 			$this->objS3 = new Zend_Service_Amazon_S3(AppConfig::get('S3AccessKey'), AppConfig::get('S3SecretKey'));
 			$this->objS3->registerStreamWrapper('s3');
 		}

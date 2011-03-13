@@ -136,6 +136,9 @@ replace: Missing request type and/or URL
 default: Invalid hash path %s
 replace: Invalid hash path %s
 
+default: Missing Zend Framework and its %s class
+replace: Missing Zend Framework and its %s class
+
 default: There was an error posting the form (2)
 replace: There was an error posting the form (2)
 

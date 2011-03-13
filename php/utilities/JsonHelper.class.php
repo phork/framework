@@ -30,11 +30,13 @@
 		static public function encode($arrData) {
 			try {
 				AppLoader::includeExtension('zend/', 'ZendLoader');
-				ZendLoader::includeClass('Zend_Json');
-				return Zend_Json::encode($arrData);
-			} catch (Exception $objException) {
-				return json_encode($arrData);
-			}
+				if (ZendLoader::isAvailable()) {
+					ZendLoader::includeClass('Zend_Json');
+					return Zend_Json::encode($arrData);
+				}
+			} catch (Exception $objException) {}
+			
+			return json_encode($arrData);
 		}
 		
 		
@@ -51,10 +53,12 @@
 		static public function decode($strData, $blnAssoc = false) {
 			try {
 				AppLoader::includeExtension('zend/', 'ZendLoader');
-				ZendLoader::includeClass('Zend_Json');
-				return Zend_Json::decode($strData, $blnAssoc);
-			} catch (Exception $objException) {
-				return json_decode($strDecode, $blnAssoc);
-			}
+				if (ZendLoader::isAvailable()) {
+					ZendLoader::includeClass('Zend_Json');
+					return Zend_Json::decode($strData, $blnAssoc);
+				}
+			} catch (Exception $objException) {}
+			
+			return json_decode($strDecode, $blnAssoc);
 		}
 	}

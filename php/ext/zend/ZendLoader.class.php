@@ -25,6 +25,26 @@
 	 * @subpackage zend
 	 */
 	class ZendLoader extends CoreStatic {
+	
+		/**
+		 * Determines if the Zend framework is installed.
+		 *
+		 * @access public
+		 * @return boolean True if available
+		 * @static
+		 */
+		static public function isAvailable() {
+			if (!($blnAvailable = class_exists('Zend_Loader'))) {
+				AppConfig::load('zend');
+				
+				if ($blnAvailable = file_exists(AppConfig::get('ZendBase') . '/Zend/Loader.php')) {
+					set_include_path(get_include_path() . PATH_SEPARATOR . AppConfig::get('ZendBase'));
+					require_once('Zend/Loader.php');
+				}
+			}
+			return $blnAvailable;
+		}
+		
 		
 		/**
 		 * Includes a Zend class and sets up the include path if
@@ -36,11 +56,6 @@
 		 * @static
 		 */
 		static public function includeClass($strClass, $mxdDirs = null) {
-			if (!class_exists('Zend_Loader')) {
-				AppConfig::load('zend');
-				set_include_path(get_include_path() . PATH_SEPARATOR . AppConfig::get('ZendBase'));
-				require_once('Zend/Loader.php');
-			}
 			Zend_Loader::loadClass($strClass, $mxdDirs);
 		}
 	}
