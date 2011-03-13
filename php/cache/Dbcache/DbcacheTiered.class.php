@@ -164,7 +164,7 @@
 					$this->objActive->objCache->clear();
 					$this->objActive->objCache->import(array(
 						'cachekey'	=> $strKey,
-						'data_raw'	=> $mxdValue,
+						'raw'		=> $mxdValue,
 						'expires'	=> date('Y-m-d H:i:s', time() + ($intExpire ? $intExpire : 315569260))
 					));
 					
@@ -191,10 +191,11 @@
 			if ($strKey = $this->cleanKey($strKey)) {
 				CoreDebug::debug($this, "Load {$strKey}");
 				
+				$this->objActive->objCache->clear();
 				if ($this->checkTier()) {
 					$mxdResult = $this->objActive->objCache->loadByCacheKey($strKey);
 					if ($mxdResult && $this->objActive->objCache->count()) {
-						$mxdResult = $this->objActive->objCache->current()->get('data_raw');
+						$mxdResult = $this->objActive->objCache->current()->get('raw');
 					} else {
 						$mxdResult = null;
 					}
@@ -220,6 +221,7 @@
 			if ($arrCleanedKeys = array_unique($this->cleanKey($arrKeys))) {
 				CoreDebug::debug($this, 'Load ' . implode(', ', array_values($arrCleanedKeys)));
 				
+				$this->objActive->objCache->clear();
 				if ($this->checkTier()) {
 					$mxdResult = $this->objActive->objCache->loadByCacheKey($arrCleanedKeys);
 					if ($mxdResult !== false) {
@@ -228,7 +230,7 @@
 							foreach ($arrKeys as $intKey=>$strKey) {
 								$strCleanedKey = $arrCleanedKeys[$intKey];
 								if (!empty($arrAssociative[$strCleanedKey])) {
-									$arrResult[$strKey] = $arrAssociative[$strCleanedKey]->get('data_raw');
+									$arrResult[$strKey] = $arrAssociative[$strCleanedKey]->get('raw');
 								}
 							}
 							$mxdResult = $arrResult;

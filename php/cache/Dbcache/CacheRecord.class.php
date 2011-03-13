@@ -28,8 +28,8 @@
 		public function set($strProperty, $mxdValue) {
 			$this->$strProperty = $mxdValue;
 			switch ($strProperty) {
-				case 'data_raw':
-					$this->data_raw = $mxdValue;
+				case 'raw':
+					$this->raw = $mxdValue;
 					if (is_array($mxdValue) || is_object($mxdValue)) {
 						$this->format = 'serialized';
 						$this->data = base64_encode(serialize($mxdValue));
@@ -42,9 +42,9 @@
 				case 'data':
 					$this->data = $mxdValue;
 					if ($this->format == 'serialized') {
-						$this->data_raw = unserialize(base64_decode($mxdValue));
+						$this->raw = unserialize(base64_decode($mxdValue));
 					} else {
-						$this->data_raw = $mxdValue;
+						$this->raw = $mxdValue;
 					}				
 					break;
 			}
