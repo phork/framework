@@ -27,7 +27,7 @@
 		static public function convertBytes($intBytes) {
 			$arrUnits = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 			
-			$intUnit = (int) $intBytes ? (floor(log($intBytes) / log(1024))) : 0;
+			$intUnit = (int) $intBytes ? floor(log($intBytes) / log(1024)) : 0;
 			return round($intBytes / pow(1024, $intUnit), 2) . $arrUnits[$intUnit];
 		}
 	}

@@ -460,7 +460,7 @@
 		 */
 		public function __clone() {
 			$this->objRecords = new ObjectIterator();
-			$this->strEventKey = get_class($this) . rand();
+			$this->strEventKey = get_class($this) . ++self::$intCounter;
 			$this->arrLoading = array();
 			$this->arrHelpers = array();
 			
