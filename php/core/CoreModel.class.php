@@ -33,19 +33,23 @@
 		protected $arrHelpers;
 		protected $arrLoading;
 		
+		static protected $intCounter = 0;
+		
 		
 		/**
 		 * Includes the record class, sets up an iterator 
 		 * object to hold the records, and sets up an event 
 		 * key which is used to register and run events in
-		 * the event object.
+		 * the event object. The event key uses the static
+		 * counter property which is shared across all of
+		 * the extensions to this class.
 		 *
 		 * @access public
 		 * @param array $arrConfig The config vars, including which helpers to use
 		 */
 		public function __construct($arrConfig = array()) {
 			$this->arrConfig = $arrConfig;
-			$this->strEventKey = get_class($this) . rand();
+			$this->strEventKey = get_class($this) . ++self::$intCounter;
 
 			if (empty($this->objRecords)) {
 				AppLoader::includeExtension('iterators/', 'ObjectIterator');

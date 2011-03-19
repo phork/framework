@@ -5,7 +5,7 @@
 	 * AssociativeIterator.class.php
 	 *
 	 * The associative iterator class stores a collection
-	 * of item that can be accessed in a standardized way.
+	 * of items that can be accessed in a standardized way.
 	 * Unlike the core iterator this stores items with an
 	 * associated key. 
 	 *

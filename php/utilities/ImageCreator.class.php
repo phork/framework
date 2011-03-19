@@ -67,6 +67,7 @@
 				case IMAGETYPE_PNG:
 					$strCreateFunction = 'ImageCreateFromPNG';
 					$strOutputFunction = 'ImagePNG';
+					$blnTransparency = true;
 					break;
 					
 				default:
@@ -88,6 +89,13 @@
 			
 			//create a new palette based image; returns an image identifier for a blank image
 			$rscResized = function_exists('imagecreatetruecolor') ? imagecreatetruecolor($intWidth, $intHeight) : imagecreate($intWidth, $intHeight);
+			
+			//set up alpha transparency
+			if (!empty($blnTransparency)) {
+				$intBackground = imagecolorallocate($rscResized, 0, 0, 0);
+				imagecolortransparent($rscResized, $intBackground);
+				imagealphablending($rscResized, false);
+			}	
 			
 			//make sure the image identifier was returned
 			if (!$rscResized) {

@@ -25,19 +25,9 @@
 		 * @static
 		 */
 		static public function convertBytes($intBytes) {
-			$arrUnits = array('B', 'kB', 'MB', 'GB', 'TB', 'PB');
+			$arrUnits = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 			
-			do {
-				$strUnit = array_shift($arrUnits);
-				
-				if ($intBytes / 1024 < 1) {
-					break;
-				}
-				
-				$intBytes = round($intBytes / 1024);
-			}
-			while (count($arrUnits));
-			
-			return $intBytes . $strUnit;
+			$intUnit = (int) $intBytes ? (floor(log($intBytes) / log(1024))) : 0;
+			return round($intBytes / pow(1024, $intUnit), 2) . $arrUnits[$intUnit];
 		}
 	}

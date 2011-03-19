@@ -35,8 +35,6 @@
 	 */
 	abstract class CoreDatabaseModel extends CoreModel {
 		
-		protected $arrConfig;
-		
 		protected $strTable;
 		protected $strPrimaryKey;
 		
