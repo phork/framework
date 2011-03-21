@@ -23,6 +23,7 @@
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * @author Elenor Collings <elenor@phork.org>
+	 * @license http://www.opensource.org/licenses/mit-license.php The MIT License
 	 * @package phork
 	 * @subpackage cache
 	 */
@@ -179,7 +180,7 @@
 				$intCounter += $intAlterBy;
 			}
 			
-			$blnResult = $this->save();
+			$blnResult = $this->current() && $this->save();
 			
 			$this->clearSaving();
 			return $blnResult && $blnReturnValue ? $intCounter : $blnResult;
@@ -208,7 +209,7 @@
 				$intCounter -= $intAlterBy;
 			}
 			
-			$blnResult = $this->save();
+			$blnResult = $this->current() && $this->save();
 			
 			$this->clearSaving();
 			return $blnResult && $blnReturnValue ? $intCounter : $blnResult;

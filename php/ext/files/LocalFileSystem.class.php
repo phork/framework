@@ -189,7 +189,7 @@
 		 * @return string The file contents
 		 */
 		public function readFile($strFilePath, $blnSuppress = false) {
-			if (($strResult = file_get_contents($this->cleanPath($strFilePath))) === false) {
+			if (($strResult = @file_get_contents($this->cleanPath($strFilePath))) === false) {
 				if (!$blnSuppress) {
 					trigger_error(AppLanguage::translate('There was an error reading the file %s', $strFilePath));
 				}

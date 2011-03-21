@@ -1,5 +1,5 @@
 <?php
-	require_once('php/cache/Memcache/MemcacheTiered.class.php');
+	require_once('php/cache/memcache/MemcacheTiered.class.php');
 		
 	/**
 	 * MemcachedTiered.class.php

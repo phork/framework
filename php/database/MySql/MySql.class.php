@@ -1,5 +1,5 @@
 <?php
-	require_once('php/database/MySql/MySqlQuery.class.php');
+	require_once('php/database/mysql/MySqlQuery.class.php');
 	require_once('php/database/DatabaseAdaptor.class.php');
 	
 	/**

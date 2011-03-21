@@ -59,7 +59,7 @@
 		 */
 		public function init() {
 			if ($strType = $this->arrConfig['Type']) {
-				if (AppLoader::includeClass("php/cache/{$strType}/", $strType = "{$strType}Tiered")) {
+				if (AppLoader::includeClass('php/cache/' . strtolower($strType) . '/', $strType = "{$strType}Tiered")) {
 					if (call_user_func(array($strType, 'isAvailable'))) {
 						$arrResources = array();
 						

@@ -30,7 +30,7 @@
 		 * @return boolen True
 		 */
 		public function open($strSavePath, $strSessionName) {
-			AppLoader::includeModel('SessionModel');
+			AppLoader::includeExtension('sessions/database/', 'SessionModel');
 		}
 		
 		

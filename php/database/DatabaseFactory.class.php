@@ -61,7 +61,7 @@
 		 */
 		public function init() {
 			if ($strType = $this->arrConfig['Type']) {
-				if (AppLoader::includeClass("php/database/{$strType}/", $strType)) {
+				if (AppLoader::includeClass('php/database/' . strtolower($strType) . '/', $strType)) {
 					if (call_user_func(array($strType, 'isAvailable'))) {
 						$arrResources = array();
 						
@@ -72,7 +72,7 @@
 						
 						//include the query builder if applicable
 						if (!empty($this->arrConfig['QueryBuilder'])) {
-							AppLoader::includeClass("database/{$strType}/", "{$strType}Query");
+							AppLoader::includeClass('database/' . strtolower($strType) . '/', "{$strType}Query");
 						}
 						
 						//instantiate a new database object
