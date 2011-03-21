@@ -7,6 +7,18 @@
 	 * Used to add, edit, delete and load the session records
 	 * from the database using the database model.
 	 *
+	 * CREATE TABLE `sessions` (
+	 *  `sessionid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	 *  `session` varchar(100) NOT NULL,
+	 *  `ipaddr` varchar(16) DEFAULT NULL,
+	 *  `useragent` varchar(155) DEFAULT NULL,
+	 *  `data` text,
+	 *  `expires` datetime DEFAULT NULL,
+	 *  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	 *  PRIMARY KEY (`sessionid`),
+	 *  UNIQUE KEY `session` (`session`)
+	 * ) ENGINE=InnoDB
+	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License

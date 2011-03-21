@@ -39,8 +39,8 @@
 		 */
 		static public function isAvailable() {
 			if (AppConfig::get('DatabaseEnabled', false) && class_exists('DatabaseFactory', false)) {
-				AppLoader::includeClass('php/cache/Dbcache/', 'CacheModel');
-				AppLoader::includeClass('php/cache/Dbcache/', 'CacheRecord');
+				AppLoader::includeClass('php/cache/dbcache/', 'CacheModel');
+				AppLoader::includeClass('php/cache/dbcache/', 'CacheRecord');
 				return true;
 			}
 		}
