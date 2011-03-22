@@ -56,6 +56,8 @@
 		 * @static
 		 */
 		static public function includeClass($strClass, $mxdDirs = null) {
-			Zend_Loader::loadClass($strClass, $mxdDirs);
+			if (self::isAvailable()) {
+				Zend_Loader::loadClass($strClass, $mxdDirs);
+			}
 		}
 	}
