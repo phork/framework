@@ -30,6 +30,7 @@
 		protected $strTempDir;
 		protected $blnTemp;
 		protected $blnLenient;
+		protected $blnAbsolute;
 		
 		const DIR_PERMS = 0755;
 		const FILE_PERMS = 0644;
@@ -199,6 +200,20 @@
 		
 		
 		/**
+		 * Outputs the contents of a file. Binary safe.
+		 *
+		 * @access public
+		 * @param string $strFilePath The file to output
+		 * @return boolean True on success 
+		 */
+		public function outputFile($strFilePath) {
+			if (!($blnResult = readfile($this->cleanPath($strFilePath))) !== false) {
+				trigger_error(AppLanguage::translate('There was an error outputting the file %s', $strFilePath));
+			}
+		}
+		
+		
+		/**
 		 * Writes a new file. Binary safe.
 		 *
 		 * @access public
@@ -350,6 +365,21 @@
 		}
 				
 		
+		/**
+		 * Gets the size of a file in bytes.
+		 *
+		 * @access public
+		 * @param string $strFilePath The file to get the size of
+		 * @return integer The file size in bytes
+		 */
+		public function getFileSize($strFilePath) {
+			if (($intFileSize = filesize($this->cleanPath($strFilePath))) === false) {
+				trigger_error(AppLanguage::translate('There was an error getting the size of the file %s', $strFilePath));
+			}
+			return $intFileSize;
+		}
+				
+		
 		/*****************************************/
 		/**     SHARED METHODS                  **/
 		/*****************************************/
@@ -378,16 +408,17 @@
 		 * @return string The cleaned path
 		 */
 		protected function cleanPath($strPath, $blnTemp = false) {
-			$strFilesDir = $this->blnTemp || $blnTemp ? $this->getTempDirectory() : $this->strFilesDir;
-			if (substr($strPath, 0, strlen($strFilesDir)) == $strFilesDir) {
-				$strPath = substr($strPath, strlen($strFilesDir));
+			if (!$this->blnAbsolute) {
+				$strFilesDir = $this->blnTemp || $blnTemp ? $this->getTempDirectory() : $this->strFilesDir;
+				if (substr($strPath, 0, strlen($strFilesDir)) == $strFilesDir) {
+					$strPath = substr($strPath, strlen($strFilesDir));
+				}
+				$strPath = $this->realPath($strFilesDir . $strPath);		
+				if (!$this->blnLenient && substr($strPath, 0, strlen($strFilesDir)) != $strFilesDir) {
+					throw new CoreException(AppLanguage::translate('Invalid file path'));
+				}
 			}
-			$strStrictPath = $this->realPath($strFilesDir . $strPath);		
-			if (!$this->blnLenient && substr($strStrictPath, 0, strlen($strFilesDir)) != $strFilesDir) {
-				throw new CoreException(AppLanguage::translate('Invalid file path'));
-			}
-			
-			return $strStrictPath;
+			return $strPath;
 		}
 		
 		
@@ -442,6 +473,19 @@
 		 */
 		public function setLenient($blnLenient) {
 			$this->blnLenient = $blnLenient;
+		}
+		
+		
+		/**
+		 * Sets the absolute flag. If turned on the path won't be
+		 * cleaned and the paths will be taken as is. This has the
+		 * potential to do damage if used incorrectly.
+		 *
+		 * @access public
+		 * @param boolean $blnAbsolute Whether the paths used are absolute
+		 */
+		public function setAbsolute($blnAbsolute) {
+			$this->blnAbsolute = $blnAbsolute;
 		}
 		
 		

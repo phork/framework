@@ -351,6 +351,19 @@
 		
 		
 		/**
+		 * Adds a pre-built where clause for the query.
+		 *
+		 * @access public
+		 * @param string $strWhere The raw where query
+		 */
+		public function addWhereRaw($strWhere) {
+			$this->arrWhere[] = array(
+				'Raw' => $strWhere
+			);
+		}
+		
+		
+		/**
 		 * Adds a having clause for the query.
 		 *
 		 * @access public
@@ -368,6 +381,19 @@
 			);
 		}
 			
+		
+		/**
+		 * Adds a pre-built having clause for the query.
+		 *
+		 * @access public
+		 * @param string $strHaving The raw having query
+		 */
+		public function addHavingRaw($strHaving) {
+			$this->arrHaving[] = array(
+				'Raw' => $strHaving
+			);
+		}
+		
 		
 		/**
 		 * Adds a group by clause for the query.
@@ -934,76 +960,69 @@
 		 * Builds the where/having part of the query.
 		 *
 		 * @access protected
-		 * @param array $arrFilter The where/having array element
+		 * @param array $arrFilters The where/having array elements
 		 * @param boolean $blnOr Whether to use OR instead of AND
 		 * @return string The query part
 		 */
-		protected function buildFilterQuery($arrFilter, $blnOr = false) {
-			$strQuery = '';
+		protected function buildFilterQuery($arrFilters, $blnOr = false) {
+			$arrQuery = array();
 			
-			foreach ($arrFilter as $intId=>$arrValue) {
+			foreach ($arrFilters as $intId=>$arrValue) {
 				if (array_key_exists('Value', $arrValue)) {
 					$mxdValue = $this->cleanFilterData($arrValue['Value']);
+					$strQuote = empty($arrValue['NoQuote']) ? "'" : '';
+					$strOperator = empty($arrValue['Operator']) ? '=' : strtoupper($arrValue['Operator']);
+					
+					switch (strtolower($strOperator)) {
+						case '=':
+						case '!=':
+						case '>':
+						case '>=':
+						case '<':
+						case '<=':
+						case '&':
+						case '|':
+						case '^':
+							$arrQuery[] = $arrValue['Column'] . " {$strOperator} {$strQuote}{$mxdValue}{$strQuote}";
+							break;
+							
+						case 'between':
+							$arrQuery[] = $arrValue['Column'] . " BETWEEN '" . $mxdValue[0] . "' AND '" . $mxdValue[1] . "'";
+							break;
+							
+						case 'like':
+							$arrQuery[] = $arrValue['Column'] . " LIKE '%{$mxdValue}%'";
+							break;
+							
+						case 'begins with':
+							$arrQuery[] = $arrValue['Column'] . " LIKE '{$mxdValue}%'";
+							break;
+							
+						case 'ends with':
+							$arrQuery[] = $arrValue['Column'] . " LIKE '%{$mxdValue}'";
+							break;
+							
+						case 'in':
+						case 'not in':
+							$arrQuery[] = $arrValue['Column'] . " {$strOperator} ({$strQuote}" . implode("{$strQuote}, {$strQuote}", $mxdValue) . "{$strQuote})";
+							break;
+							
+						case 'is null':
+						case 'is not null':
+							$arrQuery[] = $arrValue['Column'] . " {$strOperator}";
+							break;								
+							
+						default:
+							throw new CoreException(AppLanguage::translate('Invalid operator: %s', $strOperator));
+					}
+				} else if (!empty($arrValue['Raw'])) {
+					$arrQuery[] = $arrValue['Raw'];
 				} else {
 					continue;
 				}
-				
-				//set up the quotation marks, or lack thereof
-				$strQuote = empty($arrValue['NoQuote']) ? "'" : '';
-				
-				//default the operator to equals
-				$strOperator = empty($arrValue['Operator']) ? '=' : strtoupper($arrValue['Operator']);
-				
-				//build the filter query
-				switch (strtolower($strOperator)) {
-					case '=':
-					case '!=':
-					case '>':
-					case '>=':
-					case '<':
-					case '<=':
-					case '&':
-					case '|':
-					case '^':
-						$strQuery .= $arrValue['Column'] . " {$strOperator} {$strQuote}{$mxdValue}{$strQuote}";
-						break;
-						
-					case 'between':
-						$strQuery .= $arrValue['Column'] . " BETWEEN '" . $mxdValue[0] . "' AND '" . $mxdValue[1] . "'";
-						break;
-						
-					case 'like':
-						$strQuery .= $arrValue['Column'] . " LIKE '%{$mxdValue}%'";
-						break;
-						
-					case 'begins with':
-						$strQuery .= $arrValue['Column'] . " LIKE '{$mxdValue}%'";
-						break;
-						
-					case 'ends with':
-						$strQuery .= $arrValue['Column'] . " LIKE '%{$mxdValue}'";
-						break;
-						
-					case 'in':
-					case 'not in':
-						$strQuery .= $arrValue['Column'] . " {$strOperator} ({$strQuote}" . implode("{$strQuote}, {$strQuote}", $mxdValue) . "{$strQuote})";
-						break;
-						
-					case 'is null':
-					case 'is not null':
-						$strQuery .= $arrValue['Column'] . " {$strOperator}";
-						break;								
-						
-					default:
-						throw new CoreException(AppLanguage::translate('Invalid operator: %s', $strOperator));
-				}
-				
-				if (!empty($arrFilter[$intId + 1])) {
-					$strQuery .= ($blnOr ? ' OR ' : ' AND ');
-				}
 			}
 			
-			return trim($strQuery);
+			return implode($blnOr ? ' OR ' : ' AND ', $arrQuery);
 		}
 		
 		

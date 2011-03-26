@@ -131,9 +131,7 @@
 								//if there's a custom validation method, use it now (either a model method or a callback)
 								if (!empty($arrValidator['Function'])) {
 									if (!$this->validateFunction($objModel, $arrValidator)) {
-										if (empty($arrValidator['Error'])) {
-											trigger_error(AppLanguage::translate('Validation error'));
-										} else {
+										if (!empty($arrValidator['Error'])) {
 											trigger_error($arrValidator['Error']);
 										}
 									}
@@ -158,9 +156,7 @@
 								//if there's a custom validation method, use it now (either a model method or a callback)
 								if (!empty($arrValidator['Function'])) {
 									if (!$this->validateFunction($objModel, $arrValidator, $strProperty, $objRecord)) {
-										if (empty($arrValidator['Error'])) {
-											trigger_error(AppLanguage::translate('%s is invalid', $strProperty));
-										} else {
+										if (!empty($arrValidator['Error'])) {
 											trigger_error($arrValidator['Error']);
 										}
 									}

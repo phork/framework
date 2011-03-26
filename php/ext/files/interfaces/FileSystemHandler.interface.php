@@ -29,6 +29,7 @@
 		
 		public function isFile($strFilePath, $blnTemp = false);
 		public function readFile($strFilePath, $blnSuppress = false);
+		public function outputFile($strFilePath);
 		public function createFile($strFilePath, $strContents, $intMode = null);
 		public function createTempFile($strContents = null);
 		public function appendFile($strFilePath, $strContents);
@@ -36,9 +37,11 @@
 		public function moveFile($strFilePath, $strDestination, $blnFromTemp = false);
 		public function deleteFile($strFilePath, $blnSuppress = false);
 		public function setFilePerms($strFilePath, $intMode = null);
+		public function getFileSize($strFilePath);
 		
 		public function pathExists($strPath);
 		public function setLenient($blnLenient);
+		public function setAbsolute($blnAbsolute);
 		public function getFilesDirectory();
 		public function setFilesDirectory($strFilesDir);
 		public function getTempDirectory();

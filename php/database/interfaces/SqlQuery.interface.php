@@ -29,7 +29,9 @@
 		public function addColumn();
 		public function addDistinct();
 		public function addWhere($strColumn, $strValue, $strOperator = '=', $blnNoQuote = false);
+		public function addWhereRaw($strWhere);
 		public function addHaving($strColumn, $strValue, $strOperator = '=', $blnNoQuote = false);
+		public function addHavingRaw($strHaving);
 		public function addGroupBy($strColumn);
 		public function addOrderBy($strColumn, $strSort = null);
 		public function addOrderRandom();

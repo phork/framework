@@ -41,10 +41,10 @@
 		protected $strDefaultController = 'CoreControllerLite';
 		protected $strController;
 		
-		const HOOK_PRE_RUN = 'bootstrap.prerun';
-		const HOOK_PRE_INITIALIZE = 'bootstrap.preinit';
-		const HOOK_POST_INITIALIZE = 'bootstrap.postinit';
-		const HOOK_POST_RUN = 'bootstrap.postrun';
+		const HOOK_PRE_RUN = 'bootstrap.pre-run';
+		const HOOK_PRE_INITIALIZE = 'bootstrap.pre-init';
+		const HOOK_POST_INITIALIZE = 'bootstrap.post-init';
+		const HOOK_POST_RUN = 'bootstrap.post-run';
 		
 		
 		/**

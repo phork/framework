@@ -148,6 +148,9 @@ replace: The helper object must be an instance of ModelHelper
 default: There was an error deleting the file %s
 replace: There was an error deleting the file %s
 
+default: There was an error getting the size of the file %s
+replace: There was an error getting the size of the file %s
+
 default: Could not perform query: %s
 replace: Could not perform query: %s
 
@@ -216,6 +219,9 @@ replace: There was an error moving the file %s to %s
 
 default: There was an error reading the file %s
 replace: There was an error reading the file %s
+
+default: There was an error outputting the file %s
+replace: There was an error outputting the file %s
 
 default: There was an error writing to the file %s
 replace: There was an error writing to the file %s
