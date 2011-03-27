@@ -29,7 +29,7 @@
 			
 			$this->assignPageVar('strSiteUrl', AppConfig::get('SiteUrl'));
 			$this->assignPageVar('strBaseUrl', AppConfig::get('BaseUrl'));
-			$this->assignPageVar('strCurrentUrl', AppRegistry::get('Url')->getCompleteUrl(false, false));
+			$this->assignPageVar('strCurrentUrl', AppRegistry::get('Url')->getCurrentUrl(false, false));
 			$this->assignPageVar('strPageTitle', AppConfig::get('SiteTitle'));
 		}
 	}

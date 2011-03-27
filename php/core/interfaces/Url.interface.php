@@ -19,16 +19,13 @@
 		public function init();
 		public function getUrl();
 		public function setUrl($strUrl);
-		public function getCompleteUrl();
 		public function getBaseUrl();
 		public function setBaseUrl($strBaseUrl);
-		public function setRoutedUrl($strRoutedUrl);
 		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = true);
 		public function getExtension();
-		public function getSegments();
-		public function setSegments($arrSegments);
 		public function getSegment($intPosition);
-		public function getFilters();
+		public function getSegments();
 		public function getFilter($strFilter);
+		public function getFilters();
 		public function setRoutes($arrRoutes);
 	}

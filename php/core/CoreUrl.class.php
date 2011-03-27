@@ -11,9 +11,6 @@
 	 * root, and including the filename when not using mod
 	 * rewrite (eg. /admin or index.php).
 	 *
-	 * This is a singleton class and therefore it must
-	 * be instantiated using the getInstance() method.
-	 *
 	 * This must be extended by an AppUrl class.
 	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
@@ -27,48 +24,20 @@
 	 * @subpackage core
 	 * @abstract
 	 */
-	abstract class CoreUrl extends CoreObject implements Singleton, Url {
-	
-		static protected $objInstance;
+	abstract class CoreUrl extends CoreObject implements Url {
 	
 		protected $strUrl;
 		protected $strRoutedUrl;
-		protected $strCompleteUrl;
 		protected $strBaseUrl;
 		protected $strQueryString;
 		protected $strExtension;
 		
+		protected $blnInitialized;
 		protected $arrSegments;
 		protected $arrFilters;
 		protected $arrRoutes;
 		
-		protected $blnInitialized;
-		
 		protected $strFilterDelimiter = '=';
-		
-		
-		/**
-		 * The constructor can't be public for a singleton.
-		 *
-		 * @access protected
-		 */
-		protected function __construct() {}
-		
-		
-		/** 
-		 * Returns the instance of the singleton object. If
-		 * it doesn't exist it instantiates it.
-		 *
-		 * @access public
-		 * @return object The instance of the URL object
-		 * @static
-		 */
-		static public function getInstance() {
-			if (!self::$objInstance) {
-				self::$objInstance = new AppUrl();
-			}
-			return self::$objInstance;
-		}
 		
 		
 		/**
@@ -108,7 +77,6 @@
 				$this->strUrl = '/';
 			}
 			$this->strUrl = $this->cleanUrl($this->strUrl);
-			$this->strCompleteUrl = $this->cleanUrl($this->strBaseUrl . $this->strUrl);
 		}
 		
 		
@@ -202,7 +170,7 @@
 		
 		
 		/**
-		 * Returns the URL excluding the base.
+		 * Returns the URL excluding the base URL.
 		 *
 		 * @access public
 		 * @return string The URL
@@ -225,22 +193,12 @@
 		public function setUrl($strUrl) {
 			if (strstr($strUrl, '?')) {
 				list($strUrl, $strQueryString) = explode('?', $strUrl);
+				parse_str($strQueryString, $_GET);
+			} else {
+				$_GET = array();
 			}
 			$this->strUrl = $strUrl;
-			$this->strCompleteUrl = $this->strBaseUrl . $this->strUrl;
 			$this->strRoutedUrl = null;
-		}
-		
-		
-		/**
-		 * Returns the URL including the base.
-		 *
-		 * @access public
-		 * @return string The base URL
-		 */
-		public function getCompleteUrl() {
-			$this->blnInitialized || $this->init();
-			return $this->strCompleteUrl;
 		}
 		
 		
@@ -268,19 +226,8 @@
 		
 		
 		/**
-		 * Sets the routed URL.
-		 *
-		 * @access public
-		 * @return string The routed URL
-		 */
-		public function setRoutedUrl($strRoutedUrl) {
-			$this->blnInitialized = false;
-			$this->strRoutedUrl = $strRoutedUrl;
-		}
-		
-		
-		/**
-		 * Returns the URL of the current page.
+		 * Returns the URL of the current page including
+		 * the base URL.
 		 *
 		 * @access public
 		 * @param boolean $blnQueryString Whether to include the query string
@@ -290,7 +237,7 @@
 		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = true) {
 			$this->blnInitialized || $this->init();
 			
-			$strUrl = $this->strCompleteUrl;
+			$strUrl = $this->strBaseUrl . $this->strUrl;
 			if ($blnQueryString && count($_GET)) {
 				$strAmp = $blnCleanUrl ? '&amp;' : '&';
 				
@@ -315,30 +262,6 @@
 		
 		
 		/**
-		 * Returns all the URL segments. If the URL hasn't
-		 * been parsed it does that here.
-		 *
-		 * @access public
-		 * @return array The URL segments
-		 */
-		public function getSegments() {
-			$this->blnInitialized || $this->init();
-			return $this->arrSegments;
-		}
-		
-		
-		/**
-		 * Sets the URL segments in case they need overriding.
-		 *
-		 * @access public
-		 * @param array $arrSegments The URL segments
-		 */
-		public function setSegments($arrSegments) {
-			$this->arrSegments = $arrSegments;
-		}
-		
-		
-		/**
 		 * Returns the URL segment at the position passed.
 		 *
 		 * @access public
@@ -355,15 +278,15 @@
 		
 		
 		/**
-		 * Returns all the URL filters. If the URL hasn't
+		 * Returns all the URL segments. If the URL hasn't
 		 * been parsed it does that here.
 		 *
 		 * @access public
-		 * @return array The URL filters
+		 * @return array The URL segments
 		 */
-		public function getFilters() {
+		public function getSegments() {
 			$this->blnInitialized || $this->init();
-			return $this->arrFilters;
+			return $this->arrSegments;
 		}
 		
 		
@@ -382,7 +305,20 @@
 		
 		
 		/**
-		 * Sets the routes which determine which controller
+		 * Returns all the URL filters. If the URL hasn't
+		 * been parsed it does that here.
+		 *
+		 * @access public
+		 * @return array The URL filters
+		 */
+		public function getFilters() {
+			$this->blnInitialized || $this->init();
+			return $this->arrFilters;
+		}
+		
+		
+		/**
+		 * Sets the routes that determine which controller
 		 * to use based on the URL.
 		 *
 		 * @access public

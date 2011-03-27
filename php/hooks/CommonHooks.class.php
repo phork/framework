@@ -45,7 +45,7 @@
 		public function trackHistory($intMax = 1, $arrExtSkip = array()) {
 			if ($strHistorySessionName = AppConfig::get('HistorySessionName')) {
 				if (!in_array(AppRegistry::get('Url')->getExtension(), $arrExtSkip)) {
-					$strCompleteUrl = AppRegistry::get('Url')->getCompleteUrl();
+					$strCompleteUrl = AppRegistry::get('Url')->getCurrentUrl(true, false);
 					if (!empty($_SESSION[$strHistorySessionName])) {
 						if (count($_SESSION[$strHistorySessionName]) == $intMax) {
 							array_shift($_SESSION[$strHistorySessionName]);
