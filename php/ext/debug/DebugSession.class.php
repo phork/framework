@@ -41,6 +41,6 @@
 		 * @param string $strDebug The debugging string to save
 		 */
 		public function handle($strDebug) {
-			$_SESSION[$this->strSessionName][] = array(microtime(), $strDebug);
+			$_SESSION[$this->strSessionName][] = array(microtime(true), $strDebug);
 		}
 	}
