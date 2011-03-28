@@ -249,9 +249,7 @@
 		 * @access protected
 		 */
 		protected function parseUrl() {
-			AppRegistry::register('Url', $objUrl = new AppUrl());
-			
-			$objUrl->setBaseUrl(AppConfig::get('BaseUrl'));
+			AppRegistry::register('Url', $objUrl = new AppUrl(AppConfig::get('BaseUrl')));	
 			$objUrl->setRoutes(AppConfig::get('Routes', false));
 		}
 		

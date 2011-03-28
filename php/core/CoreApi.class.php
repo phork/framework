@@ -24,14 +24,14 @@
 		
 		protected $strMethodPrefix = 'handle';
 		
+		protected $objUrl;
 		protected $blnAuthenticated;
 		protected $blnInternal;
-		protected $arrParams;
 		protected $strFormat;
 		
 		protected $intStatusCode = 200;
-		protected $blnSuccess;
-		protected $arrResult;
+		protected $blnSuccess = false;
+		protected $arrResult = array();
 		
 		protected $objDelegate;
 		
@@ -42,10 +42,12 @@
 		 * and whether the user is authenticated.
 		 *
 		 * @access public
+		 * @param object $objUrl The URL object set up with the URL of the API call 
 		 * @param boolean $blnAuthenticated Whether the user is authenticated
 		 * @param boolean $blnInternal Whether this is an internal API call
 		 */
-		public function __construct($blnAuthenticated, $blnInternal = false) {
+		public function __construct(Url $objUrl, $blnAuthenticated, $blnInternal = false) {
+			$this->objUrl = $objUrl;
 			$this->blnAuthenticated = $blnAuthenticated;
 			$this->blnInternal = $blnInternal;
 		}
@@ -55,42 +57,21 @@
 		 * Determines the params, the page format based on the
 		 * URL extension, and whether the user is authenticated.
 		 * Then hands off processing to the handler function.
+		 * Also backs up any existing application alerts in order
+		 * to get the API alerts and then restores the app alerts.
 		 *
 		 * @access public
 		 * @return array The result data either to be encoded or handled as is
 		 */
 		public function run() {
-			if (get_class($this) == __CLASS__ && count($arrSegments = AppRegistry::get('Url')->getSegments()) > 2) {
+			if (get_class($this) == __CLASS__ && count($arrSegments = $this->objUrl->getSegments()) > 2) {
 				AppLoader::includeApi($strApi = ucfirst($arrSegments[1]) . 'Api');
-				$this->objDelegate = new $strApi($this->blnAuthenticated, $this->blnInternal);
+				$this->objDelegate = new $strApi($this->objUrl, $this->blnAuthenticated, $this->blnInternal);
 				return $this->objDelegate->run();
 			} else {
 				$arrCurrentAlerts = CoreAlert::flushAlerts();
 				
-				$this->arrResult = array();
-				$this->strFormat = AppRegistry::get('Url')->getExtension();
-				switch (strtolower($_SERVER['REQUEST_METHOD'])) {
-					case 'get':
-						$this->arrParams = $_GET;
-						break;
-						
-					case 'post':
-						$this->arrParams = $_POST;
-						break;
-					
-					case 'put':
-						parse_str(file_get_contents('php://input'), $this->arrParams);
-						break;
-						
-					case 'delete':
-						$this->arrParams = array();
-						break;
-						
-					case 'head':
-						$_SERVER['REQUEST_METHOD'] = 'GET';
-						$this->arrParams = $_GET;
-						break;
-				}
+				$this->strFormat = $this->objUrl->getExtension();
 				$this->handle();
 				
 				if ($arrApiAlerts = CoreAlert::flushAlerts()) {
@@ -113,11 +94,10 @@
 		 *
 		 * @access protected
 		 * @param string $strRequestType The required request type (GET, PUT, POST, DELETE)
-		 * @param boolean $blnInternalLeniency If this is true the request always verifies
 		 * @return boolean True on success
 		 */
-		protected function verifyRequest($strRequestType, $blnInternalLeniency = false) {
-			if (!($blnResult = (strtolower($_SERVER['REQUEST_METHOD']) == strtolower($strRequestType)) || ($blnInternalLeniency && $this->blnInternal))) {
+		protected function verifyRequest($strRequestType) {
+			if (!($blnResult = (strtolower($this->objUrl->getMethod()) == strtolower($strRequestType)))) {
 				trigger_error(AppLanguage::translate('Invalid request method - %s required', $strRequestType));
 			}
 			return $blnResult;
@@ -135,7 +115,7 @@
 				'batch'	=> 'GetBatch'
 			);
 			
-			$strSegment = str_replace('.' . $this->strFormat, '', AppRegistry::get('Url')->getSegment(1));
+			$strSegment = str_replace('.' . $this->strFormat, '', $this->objUrl->getSegment(1));
 			if (!empty($arrHandlers[$strSegment])) {
 				$strMethod = $this->strMethodPrefix . $arrHandlers[$strSegment];
 				$this->$strMethod();
@@ -175,8 +155,8 @@
 		 * @access protected
 		 */
 		protected function handleGetBatch() {
-			if (!empty($this->arrParams['calls'])) {
-				if ($arrCalls = json_decode($this->arrParams['calls'], true)) {
+			if ($arrCalls = $this->objUrl->getVariable('calls')) {
+				if ($arrCalls = json_decode($arrCalls, true)) {
 					AppLoader::includeUtility('ApiHelper');
 					foreach ($arrCalls as $mxdKey=>$arrCall) {
 						$strKey = isset($arrCall['key']) ? $arrCall['key'] : $mxdKey;

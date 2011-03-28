@@ -26,18 +26,31 @@
 	 */
 	abstract class CoreUrl extends CoreObject implements Url {
 	
+		protected $strMethod;
 		protected $strUrl;
 		protected $strRoutedUrl;
 		protected $strBaseUrl;
-		protected $strQueryString;
 		protected $strExtension;
 		
 		protected $blnInitialized;
 		protected $arrSegments;
 		protected $arrFilters;
+		protected $arrVariables;
 		protected $arrRoutes;
 		
 		protected $strFilterDelimiter = '=';
+		
+		
+		/**
+		 * Sets up the base URL. The rest of the set up is
+		 * handled by the init() method.
+		 *
+		 * @access public
+		 * @param string $strBaseUrl The base path of the system relative to the doc root
+		 */
+		public function __construct($strBaseUrl) {
+			$this->strBaseUrl = $strBaseUrl;
+		}
 		
 		
 		/**
@@ -46,15 +59,19 @@
 		 * segments and filters.
 		 *
 		 * @access public
-		 * @param boolean $blnSkipRouting If this is set the URL won't be routed
+		 * @param string $strMethod The request method (GET, POST, PUT, DELETE, HEAD)
+		 * @param string $strUrl The URL of the request relative to the base URL
+		 * @param array $arrVariables Any request variables (eg. override $_GET)
 		 */
-		public function init($blnSkipRouting = false) {
-			if (!$this->strUrl) {
-				$this->loadUrl();
-			}
-			if (!$blnSkipRouting) {
-				$this->routeUrl();
-			}
+		public function init($strMethod = null, $strUrl = null, $arrVariables = null) {
+			$this->blnInitialized = false;
+			$this->strRoutedUrl = null;
+			
+			(($this->strMethod = $strMethod) !== null) || ($this->strMethod = $_SERVER['REQUEST_METHOD']);
+			(($this->strUrl = $strUrl) !== null) || $this->detectUrl();
+			(($this->arrVariables = $arrVariables) !== null) || $this->detectVariables();
+			
+			$this->routeUrl();
 			$this->parseUrl();
 			
 			$this->blnInitialized = true;
@@ -63,20 +80,50 @@
 		
 		/**
 		 * Checks for a PHP CLI script first, followed by the
-		 * path info, and sets up the URL, the base URL, and 
-		 * the complete URL which is the URL plus the base URL.
+		 * path info, and sets up the URL.
+		 *
+		 * @access public
+		 */
+		protected function detectUrl() {
+			if (empty($_SERVER['HTTP_HOST'])) {
+				$strUrl = implode('/', array_slice($GLOBALS['argv'], 2));
+			} else if (!empty($_SERVER['PATH_INFO'])) {
+				$strUrl = $_SERVER['PATH_INFO'];
+			} else {
+				$strUrl = '/';
+			}
+			$this->strUrl = $this->cleanUrl($strUrl);
+		}
+		
+		
+		/**
+		 * Sets the request variables based on the request
+		 * method.
 		 *
 		 * @access protected
 		 */
-		protected function loadUrl() {
-			if (empty($_SERVER['HTTP_HOST'])) {
-				$this->strUrl = implode('/', array_slice($GLOBALS['argv'], 2));
-			} else if (!empty($_SERVER['PATH_INFO'])) {
-				$this->strUrl = $_SERVER['PATH_INFO'];
-			} else {
-				$this->strUrl = '/';
+		protected function detectVariables() {
+			switch (strtolower($_SERVER['REQUEST_METHOD'])) {
+				case 'get':
+					$this->arrVariables = $_GET;
+					break;
+					
+				case 'post':
+					$this->arrVariables = $_POST;
+					break;
+				
+				case 'put':
+					parse_str(file_get_contents('php://input'), $this->arrVariables);
+					break;
+					
+				case 'delete':
+					$this->arrVariables = array();
+					break;
+					
+				case 'head':
+					$this->arrVariables = $_GET;
+					break;
 			}
-			$this->strUrl = $this->cleanUrl($this->strUrl);
 		}
 		
 		
@@ -95,7 +142,33 @@
 		
 		
 		/**
-		 * Splits the URL into an array of segments. If any segment
+		 * Loads the routing configuration, checks for a
+		 * re-routed URL and replaces any backreferences in
+		 * the result.
+		 *
+		 * @access protected
+		 */
+		protected function routeUrl() {
+			if ($this->arrRoutes) {
+				foreach ($this->arrRoutes as $strPattern=>$strRoute) {
+					if (preg_match("#{$strPattern}#", $this->strUrl, $arrMatches)) {
+						if (preg_match_all('#\$([0-9+])#', $strRoute, $arrReplacements)) {
+							foreach ($arrReplacements[1] as $intReplacement) {
+								$strRoute = str_replace('$' . $intReplacement, !empty($arrMatches[$intReplacement]) ? $arrMatches[$intReplacement] : '', $strRoute); 
+							}
+							$strRoute = preg_replace('#//+#', '/', $strRoute);
+						}
+						$this->strRoutedUrl = $strRoute;
+						break;
+					}
+				}
+			}
+		}
+				
+		
+		/**
+		 * Splits the URL into an array of segments. If the URL has
+		 * been routed then this uses the routed URL. If any segment
 		 * contains (but does not start with) an equals sign then
 		 * it will be set as a filter and removed from the URL
 		 * segments array. For example: /page=1/
@@ -139,34 +212,21 @@
 		}
 		
 		
-		/**
-		 * Loads the routing configuration, checks for a
-		 * re-routed URL and replaces any backreferences in
-		 * the result.
-		 *
-		 * @access protected
-		 */
-		protected function routeUrl() {
-			if ($this->arrRoutes) {
-				foreach ($this->arrRoutes as $strPattern=>$strRoute) {
-					if (preg_match("#{$strPattern}#", $this->strUrl, $arrMatches)) {
-						if (preg_match_all('#\$([0-9+])#', $strRoute, $arrReplacements)) {
-							foreach ($arrReplacements[1] as $intReplacement) {
-								$strRoute = str_replace('$' . $intReplacement, !empty($arrMatches[$intReplacement]) ? $arrMatches[$intReplacement] : '', $strRoute); 
-							}
-							$strRoute = preg_replace('#//+#', '/', $strRoute);
-						}
-						$this->strRoutedUrl = $strRoute;
-						break;
-					}
-				}
-			}
-		}
-				
-		
 		/*****************************************/
 		/**     GET & SET METHODS               **/
 		/*****************************************/
+		
+		
+		/**
+		 * Returns the request method.
+		 *
+		 * @access public
+		 * @return string The request method
+		 */
+		public function getMethod() {
+			$this->blnInitialized || $this->init();
+			return $this->strMethod;
+		}
 		
 		
 		/**
@@ -182,27 +242,6 @@
 		
 		
 		/**
-		 * Sets the URL in case it needs to be different
-		 * from the actual URL. Resets the routed URL in
-		 * the event that this is overwriting an existing
-		 * URL.
-		 *
-		 * @access public
-		 * @param string $strUrl The URL
-		 */
-		public function setUrl($strUrl) {
-			if (strstr($strUrl, '?')) {
-				list($strUrl, $strQueryString) = explode('?', $strUrl);
-				parse_str($strQueryString, $_GET);
-			} else {
-				$_GET = array();
-			}
-			$this->strUrl = $strUrl;
-			$this->strRoutedUrl = null;
-		}
-		
-		
-		/**
 		 * Returns the base URL.
 		 *
 		 * @access public
@@ -210,18 +249,6 @@
 		 */
 		public function getBaseUrl() {
 			return $this->strBaseUrl;
-		}
-		
-		
-		/**
-		 * Sets the base URL.
-		 *
-		 * @access public
-		 * @return string The base URL
-		 */
-		public function setBaseUrl($strBaseUrl) {
-			$this->blnInitialized = false;
-			$this->strBaseUrl = $strBaseUrl;
 		}
 		
 		
@@ -238,11 +265,11 @@
 			$this->blnInitialized || $this->init();
 			
 			$strUrl = $this->strBaseUrl . $this->strUrl;
-			if ($blnQueryString && count($_GET)) {
+			if ($blnQueryString && count($this->arrVariables)) {
 				$strAmp = $blnCleanUrl ? '&amp;' : '&';
 				
 				$strUrl .= (strpos($strUrl, '?') !== false ? $strAmp : '?');
-				$strUrl .= http_build_query($_GET, null, $strAmp);
+				$strUrl .= http_build_query($this->arrVariables, null, $strAmp);
 			}
 			
 			return $strUrl;
@@ -257,6 +284,7 @@
 		 * @return string The file extension
 		 */
 		public function getExtension() {
+			$this->blnInitialized || $this->init();
 			return $this->strExtension;
 		}
 		
@@ -269,10 +297,8 @@
 		 * @return string The URL segment
 		 */
 		public function getSegment($intPosition) {
-			if (is_array($arrSegments = $this->getSegments())) {
-				if (array_key_exists($intPosition, $arrSegments)) {
-					return $arrSegments[$intPosition];
-				}
+			if (array_key_exists($intPosition, $arrSegments = $this->getSegments())) {
+				return $arrSegments[$intPosition];
 			}
 		}
 		
@@ -314,6 +340,34 @@
 		public function getFilters() {
 			$this->blnInitialized || $this->init();
 			return $this->arrFilters;
+		}
+		
+		
+		/**
+		 * Returns the value of the request variable if it
+		 * exists.
+		 *
+		 * @access public
+		 * @param string $strVariable The variable to retrieve
+		 * @return mixed The variable value
+		 */
+		public function getVariable($strVariable) {
+			if (array_key_exists($strVariable, $arrVariables = $this->getVariables())) {
+				return $arrVariables[$strVariable];
+			}
+		}
+		
+		
+		/**
+		 * Returns all the request variables. If the URL hasn't
+		 * been parsed it does that here.
+		 *
+		 * @access public
+		 * @return array The URL filters
+		 */
+		public function getVariables() {
+			$this->blnInitialized || $this->init();
+			return $this->arrVariables;
 		}
 		
 		

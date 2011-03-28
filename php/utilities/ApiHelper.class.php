@@ -23,18 +23,13 @@
 		 * having the the overhead of an extra HTTP request.
 		 *
 		 * @access protected
-		 * @param string $strUrl The URL to get the API data from
+		 * @param object $objUrl The URL object set up with the URL of the API call 
 		 * @param boolean $blnInternal Whether special internal methods are allowed
 		 * @return array An array with the success flag and the results
 		 * @static
 		 */
-		static protected function request($strUrl, $blnInternal = true) {
-			CoreDebug::debug('Loading', $strUrl);
-			
-			//set up the URL object to contain the URL of the API call
-			$objUrl = AppRegistry::get('Url');
-			$objUrl->setUrl($strUrl);
-			$objUrl->init();
+		static protected function request(Url $objUrl, $blnInternal = true) {
+			CoreDebug::debug('Loading', $objUrl->getUrl());
 			
 			//determine if the user is logged in
 			if ($objUserLogin = AppRegistry::get('UserLogin', false)) {
@@ -47,7 +42,7 @@
 			
 			//initialize and run the API method
 			AppLoader::includeClass('php/core/', 'CoreApi');
-			$objApi = new CoreApi(!empty($blnAuthenticated), $blnInternal);
+			$objApi = new CoreApi($objUrl, !empty($blnAuthenticated), $blnInternal);
 			list(
 				$blnSuccess, 
 				$arrResult, 
@@ -59,10 +54,6 @@
 			if ($intStatusCode >= 400 && $intEndErrors <= $intStartErrors) {
 				trigger_error(AppLanguage::translate('There was a fatal error'));
 			}
-			
-			//reset the URL to the current URL
-			$objUrl->setUrl(null);
-			$objUrl->init();
 			
 			return array($blnSuccess, $arrResult, $intStatusCode);
 		}
@@ -84,27 +75,15 @@
 		 * @static
 		 */
 		static public function get($strUrl, $blnInternal = true) {
-		
-			//back up the request method and any get data
-			$strRequestMethod = $_SERVER['REQUEST_METHOD'];
-			$arrGetBackup = $_GET;
-		
-			//fake the request method and get data
-			$_SERVER['REQUEST_METHOD'] = 'GET';
-			if ($strQueryString = substr(strstr($strUrl, '?'), 1)) {
-				parse_str($strQueryString, $_GET);
-			} else {
-				$_GET = array();
+			if (strstr($strUrl, '?') !== false) {
+				list($strUrl, $strQueryString) = explode('?', $strUrl);
+				parse_str($strQueryString, $arrVariables);
 			}
-					
-			//make a standard JSON call
-			$arrResult = self::request($strUrl, $blnInternal);
 			
-			//restore the request method and get data
-			$_SERVER['REQUEST_METHOD'] = $strRequestMethod;
-			$_GET = $arrGetBackup;
+			$objUrl = clone AppRegistry::get('Url');
+			$objUrl->init('GET', $strUrl, isset($arrVariables) ? $arrVariables : array());
 			
-			return $arrResult;
+			return self::request($objUrl, $blnInternal);
 		}
 		
 		
@@ -120,23 +99,10 @@
 		 * @static
 		 */
 		static public function post($strUrl, &$arrPost, $blnInternal = true) {
+			$objUrl = clone AppRegistry::get('Url');
+			$objUrl->init('POST', $strUrl, $arrPost);
 			
-			//back up the request method and any post data
-			$strRequestMethod = $_SERVER['REQUEST_METHOD'];
-			$arrPostBackup = $_POST;
-		
-			//fake the request method and post data
-			$_SERVER['REQUEST_METHOD'] = 'POST';
-			$_POST = $arrPost;
-		
-			//make a standard JSON call
-			$arrResult = self::request($strUrl, $blnInternal);
-			
-			//restore the request method and post data
-			$_SERVER['REQUEST_METHOD'] = $strRequestMethod;
-			$_POST = $arrPostBackup;
-			
-			return $arrResult;
+			return self::request($objUrl, $blnInternal);
 		}
 		
 		
@@ -151,20 +117,10 @@
 		 * @static
 		 */
 		static public function put($strUrl, $blnInternal = true) {
+			$objUrl = clone AppRegistry::get('Url');
+			$objUrl->init('PUT', $strUrl, array());
 			
-			//back up the request method
-			$strRequestMethod = $_SERVER['REQUEST_METHOD'];
-			
-			//fake the request method 
-			$_SERVER['REQUEST_METHOD'] = 'PUT';
-			
-			//make a standard JSON call
-			$arrResult = self::request($strUrl, $blnInternal);
-			
-			//restore the request method
-			$_SERVER['REQUEST_METHOD'] = $strRequestMethod;
-			
-			return $arrResult;
+			return self::request($objUrl, $blnInternal);
 		}
 		
 		
@@ -179,20 +135,10 @@
 		 * @static
 		 */
 		static public function delete($strUrl, $blnInternal = true) {
-		
-			//back up the request method
-			$strRequestMethod = $_SERVER['REQUEST_METHOD'];
+			$objUrl = clone AppRegistry::get('Url');
+			$objUrl->init('DELETE', $strUrl, array());
 			
-			//fake the request method 
-			$_SERVER['REQUEST_METHOD'] = 'DELETE';
-			
-			//make a standard JSON call
-			$arrResult = self::request($strUrl, $blnInternal);
-			
-			//restore the request method
-			$_SERVER['REQUEST_METHOD'] = $strRequestMethod;
-			
-			return $arrResult;
+			return self::request($objUrl, $blnInternal);
 		}
 		
 		

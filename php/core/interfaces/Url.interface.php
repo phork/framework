@@ -16,16 +16,17 @@
 	 */
 	interface Url {
 	
-		public function init();
+		public function init($strMethod = null, $strUrl = null, $arrVariables = null);
+		public function getMethod();
 		public function getUrl();
-		public function setUrl($strUrl);
 		public function getBaseUrl();
-		public function setBaseUrl($strBaseUrl);
 		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = true);
 		public function getExtension();
 		public function getSegment($intPosition);
 		public function getSegments();
 		public function getFilter($strFilter);
 		public function getFilters();
+		public function getVariable($strVariable);
+		public function getVariables();
 		public function setRoutes($arrRoutes);
 	}

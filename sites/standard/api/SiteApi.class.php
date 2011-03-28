@@ -28,7 +28,7 @@
 		 * @return string The cache key
 		 */
 		protected function getCacheKey() {
-			return AppRegistry::get('Url')->getCurrentUrl(true, false);
+			return $this->objUrl->getCurrentUrl(true, false);
 		}
 		
 	
