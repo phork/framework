@@ -9,9 +9,6 @@
 	 * root, and including the filename when not using mod
 	 * rewrite (eg. /admin or index.php).
 	 *
-	 * This is a singleton class and therefore it must
-	 * be instantiated using the getInstance() method.
-	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *
 	 * Licensed under The MIT License

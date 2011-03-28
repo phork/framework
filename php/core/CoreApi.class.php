@@ -37,8 +37,9 @@
 		
 		
 		/**
-		 * Sets up the flags that determine whether this is an
-		 * internal API which will grant additional permissions 
+		 * Sets up the URL object containing the URL of the API
+		 * request, the flag that determine whether this is an
+		 * internal API which will grant additional permissions, 
 		 * and whether the user is authenticated.
 		 *
 		 * @access public
@@ -54,11 +55,15 @@
 		
 		
 		/**
-		 * Determines the params, the page format based on the
-		 * URL extension, and whether the user is authenticated.
-		 * Then hands off processing to the handler function.
-		 * Also backs up any existing application alerts in order
-		 * to get the API alerts and then restores the app alerts.
+		 * Determines whether to delegate handling to a separate
+		 * object based on the number of segments in the URL. If
+		 * the URL has more than 2 segments this will instantiate
+		 * a new API object using the second segment's value. This
+		 * allows all API requests to be routed through this class
+		 * and for all fatal errors (eg. 404) to be handled here
+		 * instead of somewhere that won't return the results in
+		 * the right format. This also backs up any existing alerts
+		 * so that only API-specific alerts will be returned.
 		 *
 		 * @access public
 		 * @return array The result data either to be encoded or handled as is
