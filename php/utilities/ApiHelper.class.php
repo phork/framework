@@ -51,7 +51,7 @@
 			
 			//if there were major errors but nothing added to the error log add a generic error
 			$intEndErrors = count($objError->getErrors());
-			if ($intStatusCode >= 400 && $intEndErrors <= $intStartErrors) {
+			if ($intStatusCode >= 400 && $intEndErrors > $intStartErrors) {
 				trigger_error(AppLanguage::translate('There was a fatal error'));
 			}
 			

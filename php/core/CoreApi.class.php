@@ -46,7 +46,7 @@
 		 * @param boolean $blnAuthenticated Whether the user is authenticated
 		 * @param boolean $blnInternal Whether this is an internal API call
 		 */
-		public function __construct(Url $objUrl, $blnAuthenticated, $blnInternal = false) {
+		public function __construct(Url $objUrl, $blnAuthenticated = false, $blnInternal = false) {
 			$this->objUrl = $objUrl;
 			$this->blnAuthenticated = $blnAuthenticated;
 			$this->blnInternal = $blnInternal;
