@@ -152,7 +152,7 @@
 		
 		
 		/**
-		 * Handles batch processing. Multiple GET API calls can be
+		 * Handles batch processing. Multiple API calls can be
 		 * called at once. The request data must be in JSON format.
 		 * Batch API calls can't take advantage of the internal
 		 * flag.
