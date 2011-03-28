@@ -23,6 +23,18 @@
 		
 		
 		/**
+		 * Hardcode the request method to a CLI request.
+		 *
+		 * @access public
+		 * @param string $arrConfig The configuration array
+		 */
+		public function __construct($arrConfig) {
+			parent::__construct($arrConfig);
+			$_SERVER['REQUEST_METHOD'] = 'CLI';
+		}
+		
+		
+		/**
 		 * Loads the common configuration files and sets up
 		 * the script flag.
 		 *

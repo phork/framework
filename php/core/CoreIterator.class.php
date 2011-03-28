@@ -161,21 +161,7 @@
 		public function remove() {
 			return $this->removeByPosition($this->intCursor);
 		}
-		
-		
-		/**
-		 * Removes the previous item from the list. Useful
-		 * when iterating through with each() and having to
-		 * remove the current record but the iterator has
-		 * been iterated to the next one.
-		 *
-		 * @access public
-		 * @return boolean True on success
-		 */
-		public function removePrevious() {
-			return $this->removeByPosition($this->intCursor - 1);
-		}
-		
+				
 		
 		/**
 		 * Removes an item by its position, decrements the

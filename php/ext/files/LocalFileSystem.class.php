@@ -42,9 +42,9 @@
 		 * @access public
 		 */
 		public function __construct() {
-			$this->strPublicUrl = AppConfig::get('FilesUrl');
 			$this->strFilesDir = AppConfig::get('FilesDir');
 			$this->strTempDir = AppConfig::get('TempDir', false);
+			$this->strPublicUrl = AppConfig::get('FilesUrl', false);
 		}
 	
 	
