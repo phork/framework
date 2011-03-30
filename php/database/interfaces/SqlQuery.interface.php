@@ -38,7 +38,8 @@
 		public function addLimit($intLimit, $intOffset = null);
 		public function buildQuery();
 		public function buildCountQuery($strColumn = 'count');
-		public function buildInsertMultiQuery($arrQuery);
-		public function buildInsertFromQuery($objQuery);
+		public function buildInsertMultiQuery(array $arrQuery);
+		public function buildInsertFromQuery(SqlQuery $objQuery);
+		public function buildInsertOrUpdateQuery(SqlQuery $objQuery = null);
 		public function buildFunction($strFunction);
 	}

@@ -442,8 +442,8 @@
 		
 		
 		/**
-		 * Adds the limit and offset parameters for
-		 * the query.
+		 * Adds the limit and offset parameters for the
+		 * query.
 		 *
 		 * @access public
 		 * @param integer $intLimit The number of records to return
@@ -476,10 +476,9 @@
 		
 		
 		/**
-		 * Builds the query to retrieve the total
-		 * number of rows. If $blnPrepareCount is
-		 * true then it will use the FOUND_ROWS()
-		 * function.
+		 * Builds the query to retrieve the total number
+		 * of rows. If $blnPrepareCount is true then it
+		 * will use the FOUND_ROWS() function.
 		 *
 		 * @access public
 		 * @param string $strColumn The name of the column to return the count in
@@ -488,18 +487,18 @@
 		public function buildCountQuery($strColumn = 'count') {
 			if ($this->blnPrepareCount == true) {
 				$strQuery = sprintf('SELECT FOUND_ROWS() AS %s', 
-				                     $this->objDb->escapeString($strColumn)
+					$this->objDb->escapeString($strColumn)
 				);
 			} else {
 				$strQuery = sprintf('SELECT COUNT(%s %s) AS %s FROM %s %s %s %s %s',
-				                     $this->blnDistinct == true ? 'DISTINCT' : '',
-				                     $this->buildSelectColumnQuery(),
-				                     $this->objDb->escapeString($strColumn),
-				                     $this->buildTableQuery(),
-				                     $this->buildTableJoinQuery(),
-				                     $this->buildWhereQuery(),
-				                     $this->buildGroupByQuery(),
-				                     $this->buildHavingQuery()
+					$this->blnDistinct == true ? 'DISTINCT' : '',
+					$this->buildSelectColumnQuery(),
+					$this->objDb->escapeString($strColumn),
+					$this->buildTableQuery(),
+					$this->buildTableJoinQuery(),
+					$this->buildWhereQuery(),
+					$this->buildGroupByQuery(),
+					$this->buildHavingQuery()
 				);
 			}
 			
@@ -511,20 +510,20 @@
 		 * Builds the select query.
 		 *
 		 * @access public
-		 * @return string The query
+		 * @return string The select query
 		 */
 		protected function buildSelectQuery() {
 			return sprintf('SELECT %s %s %s FROM %s %s %s %s %s %s %s',
-							$this->blnPrepareCount == true ? 'SQL_CALC_FOUND_ROWS' : '',
-			                $this->blnDistinct == true ? 'DISTINCT' : '',
-			                $this->buildSelectColumnQuery(),
-			                $this->buildTableQuery(),
-			                $this->buildTableJoinQuery(),
-			                $this->buildWhereQuery(),
-			                $this->buildGroupByQuery(),
-			                $this->buildHavingQuery(),
-			                $this->buildOrderQuery(),
-			                $this->buildLimitQuery()
+				$this->blnPrepareCount == true ? 'SQL_CALC_FOUND_ROWS' : '',
+				$this->blnDistinct == true ? 'DISTINCT' : '',
+				$this->buildSelectColumnQuery(),
+				$this->buildTableQuery(),
+				$this->buildTableJoinQuery(),
+				$this->buildWhereQuery(),
+				$this->buildGroupByQuery(),
+				$this->buildHavingQuery(),
+				$this->buildOrderQuery(),
+				$this->buildLimitQuery()
 			);
 		}
 		
@@ -533,33 +532,35 @@
 		 * Builds the insert query.
 		 *
 		 * @access public
-		 * @return string The query
+		 * @return string The insert query
 		 */
 		protected function buildInsertQuery() {
 			return sprintf('INSERT %s INTO %s (%s) VALUES (%s)',
-			                $this->blnIgnore ? 'IGNORE' : null,
-			                $this->buildTableQuery(),
-			                $this->buildInsertColumnQuery(),
-			                $this->buildInsertValuesQuery()
+				$this->blnIgnore ? 'IGNORE' : null,
+				$this->buildTableQuery(),
+				$this->buildInsertColumnQuery(),
+				$this->buildInsertValuesQuery()
 			);
 		}
 		
 		
 		/**
 		 * Builds the query to insert multiple records.
+		 * This should be passed an array of MySqlQuery
+		 * objects that are each initialized for an insert
+		 * query.
 		 *
 		 * @access public
 		 * @param array $arrQuery The array of insert query objects
-		 * @return string The query
+		 * @return string The insert multiple records query
 		 */
-		public function buildInsertMultiQuery($arrQuery) {
+		public function buildInsertMultiQuery(array $arrQuery) {
 			$strQuery = sprintf('INSERT %s INTO %s (%s) VALUES',
-			                     $this->blnIgnore ? 'IGNORE' : null,
-			                     $this->buildTableQuery(),
-			                     $this->buildInsertColumnQuery()
+				$this->blnIgnore ? 'IGNORE' : null,
+				$this->buildTableQuery(),
+				$this->buildInsertColumnQuery()
 			);
 			
-			//loop through each query object and add the insert values
 			foreach ($arrQuery as $intId=>$objQuery) {
 				$strQuery .= sprintf(' (%s)', $objQuery->buildInsertValuesQuery());
 				if (!empty($arrQuery[$intId + 1])) {
@@ -572,35 +573,39 @@
 		
 		
 		/**
-		 * Builds the query to insert from a select
-		 * query.
+		 * Builds the query to insert from a select query.
+		 * This should be passed a MySqlQuery object that's
+		 * initialized with a select query.
 		 *
 		 * @access public
 		 * @param object $objQuery The select query object
-		 * @return string The query
+		 * @return string The insert from query
 		 */
-		public function buildInsertFromQuery($objQuery) {
+		public function buildInsertFromQuery(SqlQuery $objQuery) {
 			if (!$objQuery->isSelect()) {
 				throw new CoreException(AppLanguage::translate('Invalid query object - It must be a select query'));
 			}
 			
 			return sprintf('INSERT INTO %s %s %s',
-			                $this->buildTableQuery(),
-			                (($strInsertColumn = $this->buildInsertColumnQuery()) ? "($strInsertColumn)" : ''),
-			                $objQuery->buildQuery()
+				$this->buildTableQuery(),
+				($strInsertColumn = $this->buildInsertColumnQuery()) ? "($strInsertColumn)" : '',
+				$objQuery->buildQuery()
 			);
 		}
 		
 		
 		/**
-		 * Builds an insert or update on duplicate
-		 * key query.
+		 * Builds an insert or update on duplicate key
+		 * query. This should be passed a MySqlQuery
+		 * that's been initialized with the update columns
+		 * otherwise it will use the same columns as the
+		 * insert uses.
 		 *
 		 * @access public
 		 * @param object $objQuery The update query object if the update columns differ from insert
-		 * @return string The query
+		 * @return string The insert or update query
 		 */
-		public function buildInsertOrUpdateQuery($objQuery = null) {
+		public function buildInsertOrUpdateQuery(SqlQuery $objQuery = null) {
 			return sprintf('%s ON DUPLICATE KEY UPDATE %s',
 				$this->buildInsertQuery(),
 				$objQuery ? $objQuery->buildUpdateColumnQuery() : $this->buildUpdateColumnQuery()
@@ -612,16 +617,16 @@
 		 * Builds the update query.
 		 *
 		 * @access public
-		 * @return string The query
+		 * @return string The update query
 		 */
 		protected function buildUpdateQuery() {
 			return sprintf('UPDATE %s %s SET %s %s %s %s',
-			                $this->blnIgnore ? 'IGNORE' : null,
-			                $this->buildTableQuery(),
-			                $this->buildUpdateColumnQuery(),
-			                $this->buildWhereQuery(),
-			                $this->buildOrderQuery(),
-			                $this->buildLimitQuery()
+				$this->blnIgnore ? 'IGNORE' : null,
+				$this->buildTableQuery(),
+				$this->buildUpdateColumnQuery(),
+				$this->buildWhereQuery(),
+				$this->buildOrderQuery(),
+				$this->buildLimitQuery()
 			);
 		}
 				
@@ -630,13 +635,13 @@
 		 * Builds the delete query.
 		 *
 		 * @access public
-		 * @return string The query
+		 * @return string The delete query
 		 */
 		protected function buildDeleteQuery() {
 			return sprintf('DELETE FROM %s %s %s',
-			                $this->buildTableQuery(),
-			                $this->buildWhereQuery(),
-			                $this->buildLimitQuery()
+				$this->buildTableQuery(),
+				$this->buildWhereQuery(),
+				$this->buildLimitQuery()
 			);
 		}
 		
@@ -658,7 +663,7 @@
 		 *
 		 * @access public
 		 * @param string $strFunction The function to apply to the column (eg. COUNT)
-		 * @return string The query part
+		 * @return string The function query part
 		 */
 		public function buildFunction($strFunction) {
 			$arrFunctionArgs = func_get_args();
@@ -668,7 +673,7 @@
 			$strQuery .= implode(', ', $arrFunctionArgs);
 			$strQuery .= ')';
 			
-			return trim($strQuery);
+			return $strQuery;
 		}
 		
 		
@@ -676,20 +681,18 @@
 		 * Returns the table part of the query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The table query part
 		 */
 		protected function buildTableQuery() {
-			$strQuery = '';
-			
 			if (!empty($this->arrTable)) {
 				$strQuery = '`' . $this->arrTable['Table'] . '`';
 				
 				if ($this->arrTable['Alias']) {
 					$strQuery .= ' AS ' . $this->arrTable['Alias'];
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -697,12 +700,12 @@
 		 * Returns the table join part of the query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The join query part
 		 */
 		protected function buildTableJoinQuery() {	
-			$strQuery = '';
-			
-			if (!empty($this->arrTableJoin)) {	
+			if (!empty($this->arrTableJoin)) {
+				$strQuery = '';
+				
 				foreach ($this->arrTableJoin as $intId=>$arrTable) {
 					if ($arrTable['JoinType']) {
 						$strQuery .= ' ' . $arrTable['JoinType'] . ' ';
@@ -718,17 +721,21 @@
 					
 					if (is_array($arrTable['JoinUsing'])) {
 						$strQuery .= ' ON (';
-						foreach ($arrTable['JoinUsing'] as $arrValue) {
-							$strQuery .= $arrValue[0] . '=' . $arrValue[1] . ' AND ';
+						foreach ($arrTable['JoinUsing'] as $mxdValue) {
+							if (is_array($mxdValue)) {
+								$strQuery .= $mxdValue[0] . '=' . $mxdValue[1] . ' AND ';
+							} else {
+								$strQuery .= "{$mxdValue} AND ";
+							}
 						}
 						$strQuery = substr($strQuery, 0, -5) . ') ';
 					} else if (!empty($arrTable['JoinUsing'])) {
 						$strQuery .= ' USING (' . $arrTable['JoinUsing'] . ') ';
 					}
 				}
+				
+				return trim($strQuery);
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -736,12 +743,12 @@
 		 * Returns the column part of the select query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The select column query part
 		 */
 		protected function buildSelectColumnQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrColumn)) {
+				$strQuery = '';
+				
 				foreach ($this->arrColumn as $intId=>$arrColumn) {
 					$strQuery .= $arrColumn['Column'];
 					
@@ -753,11 +760,9 @@
 						$strQuery .= ', ';	
 					}
 				}
-			} else {
-				$strQuery = '*';
 			}
 			
-			return trim($strQuery);
+			return isset($strQuery) ? $strQuery : '*';
 		}
 		
 		
@@ -765,12 +770,12 @@
 		 * Returns the column part of the update query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The update column query part
 		 */
 		protected function buildUpdateColumnQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrColumn)) {
+				$strQuery = '';
+				
 				foreach ($this->arrColumn as $intId=>$arrColumn) {
 					$strQuery .= $arrColumn['Column'] . ' = ';
 					if ($arrColumn['NoFormat']) {
@@ -783,9 +788,9 @@
 						$strQuery .= ', ';	
 					}
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -793,12 +798,12 @@
 		 * Returns the column part of the insert query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The insert column query part
 		 */
 		protected function buildInsertColumnQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrColumn)) {
+				$strQuery = '';
+				
 				foreach ($this->arrColumn as $intId=>$arrColumn) {
 					$strQuery .= $arrColumn['Column'];
 					
@@ -806,9 +811,9 @@
 						$strQuery .= ', ';	
 					}
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -816,12 +821,12 @@
 		 * Returns the values part of the insert query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The insert values query part
 		 */
 		protected function buildInsertValuesQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrColumn)) {
+				$strQuery = '';
+				
 				foreach ($this->arrColumn as $intId=>$arrColumn) {
 					if ($arrColumn['NoFormat']) {
 						$strQuery .= $arrColumn['Value'];
@@ -833,9 +838,9 @@
 						$strQuery .= ', ';	
 					}
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -843,16 +848,12 @@
 		 * Returns the where part of the query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The where query part
 		 */
 		protected function buildWhereQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrWhere)) {
-				$strQuery .= ' WHERE ' . $this->buildFilterQuery($this->arrWhere, $this->blnWhereOr);
+				return ' WHERE ' . $this->buildFilterQuery($this->arrWhere, $this->blnWhereOr);
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -860,11 +861,9 @@
 		 * Returns the group by part of the query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The group by query part
 		 */
 		protected function buildGroupByQuery() {
-			$strQuery = '';
-			
 			if (!empty($this->arrGroupBy)) {
 				$strQuery = 'GROUP BY ';
 				
@@ -875,9 +874,9 @@
 						$strQuery .= ', ';	
 					}
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -885,16 +884,12 @@
 		 * Returns the having part of the query.
 		 * 
 		 * @access protected
-		 * @return string The query part
+		 * @return string The having query part
 		 */
 		protected function buildHavingQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrHaving)) {
-				$strQuery .= ' HAVING ' . $this->buildFilterQuery($this->arrHaving, $this->blnHavingOr);
+				return ' HAVING ' . $this->buildFilterQuery($this->arrHaving, $this->blnHavingOr);
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -902,13 +897,12 @@
 		 * Returns the order by part of the query.
 		 *
 		 * @access protected
-		 * @return string The query
+		 * @return string The order by query
 		 */
 		protected function buildOrderQuery() {
-			$strQuery = '';
-			
 			if (count($this->arrOrder)) {
 				$strQuery = 'ORDER BY ';
+				
 				foreach ($this->arrOrder as $intId=>$arrOrder) {
 					if (isset($arrOrder['Column'])) {
 						$strQuery .= $arrOrder['Column'];
@@ -927,9 +921,9 @@
 						$strQuery .= ', ';
 					}
 				}
+				
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -937,11 +931,9 @@
 		 * Returns the limit part of the query.
 		 *
 		 * @access protected
-		 * @return string The query part
+		 * @return string The limit query part
 		 */
 		protected function buildLimitQuery() {
-			$strQuery = '';
-			
 			if (!empty($this->arrLimit)) {
 				$strQuery = 'LIMIT ';
 				
@@ -950,9 +942,8 @@
 				}
 				
 				$strQuery .= $this->arrLimit['Limit'];
+				return $strQuery;
 			}
-			
-			return trim($strQuery);
 		}
 		
 		
@@ -962,7 +953,7 @@
 		 * @access protected
 		 * @param array $arrFilters The where/having array elements
 		 * @param boolean $blnOr Whether to use OR instead of AND
-		 * @return string The query part
+		 * @return string The where or having filter query part
 		 */
 		protected function buildFilterQuery($arrFilters, $blnOr = false) {
 			$arrQuery = array();
@@ -1131,7 +1122,11 @@
 					break;
 					
 				case 'where':
-					call_user_func_array(array($this, 'addWhere'), $arrParameters);
+					if (count($arrParameters) == 1) {
+						call_user_func_array(array($this, 'addWhereRaw'), $arrParameters);
+					} else {
+						call_user_func_array(array($this, 'addWhere'), $arrParameters);
+					}
 					break;
 				
 				case 'groupby':
@@ -1139,7 +1134,11 @@
 					break;
 				
 				case 'having':
-					call_user_func_array(array($this, 'addHaving'), $arrParameters);
+					if (count($arrParameters) == 1) {
+						call_user_func_array(array($this, 'addHavingRaw'), $arrParameters);
+					} else {
+						call_user_func_array(array($this, 'addHaving'), $arrParameters);
+					}
 					break;
 				
 				case 'orderby':
@@ -1161,5 +1160,16 @@
 			}
 			
 			return $this;
+		}
+		
+		
+		/**
+		 * Returns the built query.
+		 *
+		 * @access public
+		 * @return string The built query
+		 */
+		public function __toString() {
+			return $this->buildQuery();
 		}
 	}

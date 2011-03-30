@@ -22,7 +22,7 @@
 		 * Returns a string representation of the object.
 		 *
 		 * @access public
-		 * @return string
+		 * @return string The class name of the object
 		 */
 		public function __toString() {
 			return get_class($this);
