@@ -124,7 +124,7 @@
 		
 		/**
 		 * Exits cleanly after calling the post run events.
-		 * This should be called from a controller.
+		 * This should be called from a controller, if at all.
 		 *
 		 * @access public
 		 */
@@ -169,7 +169,10 @@
 		
 		
 		/**
-		 * Loads the common configuration files.
+		 * Loads the common configuration files. By default
+		 * this is just the global config followed by the site
+		 * config. The site config can override anything set
+		 * in the global config.
 		 *
 		 * @access protected
 		 */
@@ -180,9 +183,9 @@
 		
 		
 		/**
-		 * Sets the file path(s) to the language files
-		 * and loads the language translations for the
-		 * language defined in the config.
+		 * Sets the file path(s) to the language files and
+		 * loads the language translations for the language
+		 * defined in the config.
 		 *
 		 * @access protected
 		 */
@@ -243,8 +246,10 @@
 		
 		
 		/**
-		 * Initializes and registers the URL object and
-		 * sets it up for parsing.
+		 * Initializes and registers the URL object, adds
+		 * the routes, and sets it up for parsing. The actual
+		 * URL parsing happens the first time a request is
+		 * made to retrieve any part of the URL.
 		 *
 		 * @access protected
 		 */
@@ -400,7 +405,7 @@
 		/**
 		 * Changes the controller when processing needs to
 		 * be forwarded to a different controller and runs
-		 * the controller.
+		 * the new controller.
 		 *
 		 * @access public
 		 * @param string $strController The name of the new controller

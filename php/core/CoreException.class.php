@@ -19,7 +19,7 @@
 	class CoreException extends Exception {
 	
 		/**
-		 * The core exception object's constructor.
+		 * The constructor sets up itself as the exception handler.
 		 *
 		 * It is highly recommended that this call parent::__construct() 
 		 * to ensure all available data has been properly assigned.

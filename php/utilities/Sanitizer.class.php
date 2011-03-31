@@ -17,6 +17,20 @@
 	class Sanitizer {
 	
 		/**
+		 * Delegates the sanitation process to either the
+		 * item sanitizer or the array sanitizer.
+		 *
+		 * @access public
+		 * @param mixed The value to sanitize
+		 * @return boolean True if anything was unsanitary
+		 * @static
+		 */
+		static public function sanitize(&$mxdValue) {
+			return is_array($mxdValue) ? !!self::sanitizeArray($mxdValue) : self::sanitizeItem($mxdValue);
+		}
+		
+	
+		/**
 		 * Strips tags and removes any other unwanted strings
 		 * from the value passed.
 		 *
@@ -45,7 +59,7 @@
 		 */
 		static public function sanitizeArray(&$arrData) {
 			$arrUnsanitary = array();
-			foreach ($arrData as $strKey=>$mxdValue) {
+			foreach ($arrData as $strKey=>&$mxdValue) {
 				if (is_array($mxdValue)) {
 					$arrUnsanitary = array_merge($arrUnsanitary, self::sanitizeArray($mxdValue));
 				} else {

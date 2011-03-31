@@ -275,33 +275,37 @@
 		 * @access public
 		 * @param string $strFile The file to get the include path for
 		 * @param boolean $blnFatal Throws an exception if the file isn't found
-		 * @return string The include path if it exists
+		 * @return string The include path if it exists and is readable
 		 * @static
 		 */
 		static public function getIncludePath($strFile, $blnFatal = true) {
 			$objInstance = self::getInstance();
+			$strReturn = null;
 			
 			if (DIRECTORY_SEPARATOR != '/') {
 				$strFile = str_replace('/', DIRECTORY_SEPARATOR, $strFile);
 			}
 			
-			if (file_exists($strFile)) {
-				return $strFile;
-			}
-		
-			if (substr(trim($strFile), 0, 1) != DIRECTORY_SEPARATOR) {
-				foreach ($objInstance->arrIncludePaths as $strPath) {
-					$strFullPath = $strPath . $strFile;
-					if (file_exists($strFullPath) && is_readable($strFullPath)) {
-						return $strFullPath;
+			if (!is_file($strFile)) {
+				if (substr(trim($strFile), 0, 1) != DIRECTORY_SEPARATOR) {
+					foreach ($objInstance->arrIncludePaths as $strPath) {
+						$strFullPath = $strPath . $strFile;
+						if (is_file($strFullPath)) {
+							if (is_readable($strFullPath)) {
+								$strReturn = $strFullPath;
+							}
+							break;
+						}
 					}
 				}
+			} else {
+				$strReturn = $strFile;
 			}
 			
-			if ($blnFatal) {
+			if (!$strReturn && $blnFatal) {
 				throw new CoreException(AppLanguage::translate('Invalid include path: %s', $strFile));
 			}
 			
-			return false;
+			return $strReturn;
 		}
 	}

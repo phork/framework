@@ -227,7 +227,7 @@
 		
 		/**
 		 * Returns the delegate API object or self if nothing
-		 * has been delegated.
+		 * has been delegated to.
 		 *
 		 * @access public
 		 * @return object The API object

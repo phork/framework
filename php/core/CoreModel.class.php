@@ -49,16 +49,13 @@
 		 */
 		public function __construct($arrConfig = array()) {
 			$this->arrConfig = $arrConfig;
-			$this->strEventKey = get_class($this) . ++self::$intCounter;
-
-			if (empty($this->objRecords)) {
-				AppLoader::includeExtension('iterators/', 'ObjectIterator');
-				$this->objRecords = new ObjectIterator();
-			}
-			$this->includeRecordClass();
 			
-			$this->arrHelpers = array();
-			$this->arrLoading = array();
+			if (!is_object($this->objRecords)) {
+				AppLoader::includeExtension('iterators/', 'ObjectIterator');
+			}
+			
+			$this->includeRecordClass();
+			$this->init($arrConfig);
 		}
 		
 		
@@ -82,7 +79,10 @@
 		 * @param array $arrConfig The config vars, including which helpers to use
 		 */
 		protected function init($arrConfig) {
-			return;
+			$this->objRecords = new ObjectIterator();
+			$this->strEventKey = get_class($this) . ++self::$intCounter;
+			$this->arrHelpers = array();
+			$this->arrLoading = array();
 		}
 		
 		
@@ -99,7 +99,8 @@
 		
 		/**
 		 * Imports an array of data into a new object and appends
-		 * the object to the list.
+		 * the object to the list. If the sanitize flag is true
+		 * then the data will be sanitized before it's imported. 
 		 *
 		 * @access public
 		 * @param array $arrData The array of data to import
@@ -112,10 +113,11 @@
 				$objRecord->set($strKey, $mxdVal);
 			}
 			
-			$intKey = $this->objRecords->append($objRecord);
 			if ($blnSanitize) {
-				$this->sanitize();
+				$this->sanitize($objRecord);
 			}
+			
+			$intKey = $this->objRecords->append($objRecord);
 			return $intKey;
 		}
 		
@@ -127,14 +129,12 @@
 		 *
 		 * @access public
 		 */
-		public function sanitize() {
+		public function sanitize($objRecord = null) {
 			AppLoader::includeUtility('Sanitizer');
-			if ($objRecord = $this->current()) {
+			if (($objRecord && $objRecord instanceof CoreRecord) || $objRecord = $this->current()) {
 				foreach ($objRecord as $strKey=>$mxdValue) {
-					if (is_string($mxdValue)) {
-						if (Sanitizer::sanitizeItem($mxdValue)) {
-							$objRecord->set($strKey, $mxdValue);
-						}
+					if (Sanitizer::sanitize($mxdValue)) {
+						$objRecord->set($strKey, $mxdValue);
 					}
 				}
 			}
@@ -452,18 +452,12 @@
 		
 		
 		/**
-		 * Method called when the object is cloned. Resets
-		 * the event key and helpers and then calls init()
-		 * to re-initialize them with a new event key.
+		 * Re-initializes the object when it's been cloned.
+		 * Resets the event key, helpers and iterator object.
 		 *
 		 * @access public
 		 */
 		public function __clone() {
-			$this->objRecords = new ObjectIterator();
-			$this->strEventKey = get_class($this) . ++self::$intCounter;
-			$this->arrLoading = array();
-			$this->arrHelpers = array();
-			
 			$this->init($this->arrConfig);
 		}
 	}
