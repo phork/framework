@@ -49,7 +49,7 @@
 	/*******************************************/
 	
 	
-	//define the url patterns for full page caches
+	//define the URL patterns for full page caches
 	$arrConfig['CacheUrls'] = array(
 		'#^/concat/(.*)#'	=> array(
 			'Namespace'		=> null,

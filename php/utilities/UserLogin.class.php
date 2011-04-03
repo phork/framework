@@ -91,7 +91,7 @@
 			$this->getUserModel()->clear();
 			
 			if (isset($_COOKIE[$strSessionName = session_name()])) {
-				setcookie($strSessionName, '', time() - 3600, '/', AppConfig::get('CookieDomain'));
+				setcookie($strSessionName, '', time() - 3600, AppConfig::get('CookiePath'), AppConfig::get('CookieDomain'));
 				unset($_COOKIE[$strSessionName]);
 			}
 			$this->deleteCookie();
@@ -247,7 +247,7 @@
 				
 				if ($objUserLogin->save()) {
 					$strValue = $intUserId . self::COOKIE_SEPARATOR . $objUserLogin->first()->get('publickey');
-					setcookie($this->strUserCookieName, $strValue, time() + (86400 * 365), '/', AppConfig::get('CookieDomain'));
+					setcookie($this->strUserCookieName, $strValue, time() + (86400 * 365), AppConfig::get('CookiePath'), AppConfig::get('CookieDomain'));
 				}
 			}
 		}
@@ -262,7 +262,7 @@
 		 */
 		protected function deleteCookie() {
 			if (isset($_COOKIE[$this->strUserCookieName])) {
-				setcookie($this->strUserCookieName, '', time() - 3600, '/', AppConfig::get('CookieDomain'));
+				setcookie($this->strUserCookieName, '', time() - 3600, AppConfig::get('CookiePath'), AppConfig::get('CookieDomain'));
 			}
 		}
 		
