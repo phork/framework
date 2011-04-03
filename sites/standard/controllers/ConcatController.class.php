@@ -55,7 +55,7 @@
 			AppDisplay::getInstance()->appendHeader('Content-Type: text/css');
 			$this->clientCache();
 			$this->strEmbed = "@import url('%s');";
-			$this->baseUrl = AppConfig::get('CssUrl');
+			$this->strBaseUrl = AppConfig::get('CssUrl');
 			$this->parseUrl(array($this, 'minifyCss'));
 		}
 		
@@ -69,7 +69,7 @@
 			AppDisplay::getInstance()->appendHeader('Content-Type: text/javascript');
 			$this->clientCache();
 			$this->strEmbed = "document.write('<script type=\"text/javascript\" src=\"%s\"></script>');";
-			$this->baseUrl = AppConfig::get('JsUrl');
+			$this->strBaseUrl = AppConfig::get('JsUrl');
 			$this->parseUrl(array($this, 'minifyJs'));
 		}
 		
@@ -135,6 +135,10 @@
 			$strContents = '';
 			foreach ($this->arrFiles as $strUrl) {
 				if ($strUrl) {
+					if (substr($strUrl, 0, 1) == '/') {
+						$strUrl = $_SERVER['DOCUMENT_ROOT'] . $strUrl;
+					}
+					
 					if ($strUrlContents = @file_get_contents($strUrl, false)) {
 						$strContents .= $strUrlContents;
 					} else {
@@ -174,7 +178,7 @@
 					$strFileDir = dirname(realpath($strFilePath));
 					foreach (AppConfig::get('AssetPaths') as $strAssetPath) {
 						if (substr($strFileDir, 0, strlen($strAssetPath)) == $strAssetPath) {
-							$strUrl = $this->strBaseUrl . substr($strFile, 1);
+							$strUrl = $strFile;
 							break;
 						}
 					}

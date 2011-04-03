@@ -66,10 +66,10 @@
 		
 		
 		/**
-		 * Registers the object by storing it in the
-		 * object array. Has additional checks to make
-		 * sure that certain reserved names are of the
-		 * expected object type.
+		 * Registers the object by storing it in the object
+		 * array. Has additional checks to make sure that
+		 * certain reserved names are of the expected object
+		 * type.
 		 *
 		 * @access public
 		 * @param string $strName The name of the registered object
@@ -79,17 +79,14 @@
 		static public function register($strName, $objObject) {
 			$objInstance = self::getInstance();
 			
-			//make sure the object is in fact an object
 			if (!is_object($objObject)) {
 				throw new CoreException(AppLanguage::translate('Only objects can be added to the registry'));
 			}
 		
-			//make sure the object hasn't been registered already
 			if (isset($objInstance->arrObjects[$strName])) {
 				throw new CoreException(AppLanguage::translate('An object named %s has already been registered', $strName));
 			}
 			
-			//make sure if the object is using a reserved name that it's the right type
 			if (array_key_exists($strName, $objInstance->arrReserved)) {
 				if (!($objObject instanceof $objInstance->arrReserved[$strName])) {
 					throw new CoreException(AppLanguage::translate('The %s object is a reserved object and must implement the %s interface', $strReserved, $objInstance->arrReserved[$strName]));
@@ -101,8 +98,7 @@
 		
 		
 		/**
-		 * Returns the object registered with the key
-		 * passed.
+		 * Returns the object registered with the name passed.
 		 *
 		 * @access public
 		 * @param string $strName The name of the registered object
@@ -126,7 +122,7 @@
 		
 		
 		/**
-		 * Removes the object from the registry.
+		 * Removes an object from the registry by name.
 		 *
 		 * @access public
 		 * @param string $strName The name of the object to remove

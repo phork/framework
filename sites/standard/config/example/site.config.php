@@ -11,16 +11,22 @@
 	/*******************************************/
 	
 	
-	//the site urls
-	$arrConfig['SiteUrl'] = 'http://example.org';
-	$arrConfig['SecureUrl'] = 'https://example.org';
+	//the site and secure URLs should just contain the schema and the domain
+	$arrConfig['SiteUrl'] = 'http://' . $_SERVER['HTTP_HOST'];
+	$arrConfig['SecureUrl'] = 'https://' . $_SERVER['HTTP_HOST'];
+	
+	//the URLs to the assets relative to the document root (the schema and domain are optional) 
 	$arrConfig['ImageUrl'] = '';
 	$arrConfig['CssUrl'] = '';
 	$arrConfig['JsUrl'] = '';
 	
-	//the url of the front controller (no trailing slash) excluding the filename if using mod rewrite
-	//$arrConfig['BaseUrl'] = '';					//mod rewrite enabled
-	$arrConfig['BaseUrl'] = '/index.php';			//no mod rewrite
+	//the URL of the front controller relative to the document root (excluding the filename if using mod rewrite)
+	//$arrConfig['BaseUrl'] = '';                   //mod rewrite enabled
+	$arrConfig['BaseUrl'] = '/index.php';           //no mod rewrite
+	
+	//the domain and path to use for cookies
+	$arrConfig['CookieDomain'] = $_SERVER['HTTP_HOST'];
+	$arrConfig['CookiePath'] = '/';
 	
 	
 	/*******************************************/
