@@ -103,7 +103,7 @@
 		 * @access protected
 		 */
 		protected function detectVariables() {
-			switch (strtolower($_SERVER['REQUEST_METHOD'])) {
+			switch (strtolower($this->strMethod)) {
 				case 'get':
 					$this->arrVariables = $_GET;
 					break;
@@ -261,11 +261,11 @@
 		 * @param boolean $blnCleanUrl Whether to clean the URL data
 		 * @return string The current URL
 		 */
-		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = true) {
+		public function getCurrentUrl($blnQueryString = true, $blnCleanUrl = false) {
 			$this->blnInitialized || $this->init();
 			
 			$strUrl = $this->strBaseUrl . $this->strUrl;
-			if ($blnQueryString && count($this->arrVariables)) {
+			if ($blnQueryString && strtolower($this->strMethod) == 'get' && count($this->arrVariables)) {
 				$strAmp = $blnCleanUrl ? '&amp;' : '&';
 				
 				$strUrl .= (strpos($strUrl, '?') !== false ? $strAmp : '?');
