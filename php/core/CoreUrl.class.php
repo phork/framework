@@ -31,6 +31,7 @@
 		protected $strRoutedUrl;
 		protected $strBaseUrl;
 		protected $strExtension;
+		protected $blnEndSlash;
 		
 		protected $blnInitialized;
 		protected $arrSegments;
@@ -47,9 +48,11 @@
 		 *
 		 * @access public
 		 * @param string $strBaseUrl The base path of the system relative to the doc root
+		 * @param string $blnEndSlash Whether to force the URL to end with a slash 
 		 */
-		public function __construct($strBaseUrl) {
+		public function __construct($strBaseUrl, $blnEndSlash = true) {
 			$this->strBaseUrl = $strBaseUrl;
+			$this->blnEndSlash = $blnEndSlash;
 		}
 		
 		
@@ -130,14 +133,18 @@
 		/**
 		 * Cleans up the URL by replacing any double slashes with
 		 * single slashes. Doesn't replace double slashes following
-		 * a colon.
+		 * a colon. Also makes sure the URL ends with a slash.
 		 *
 		 * @access protected
 		 * @param string $strUrl The URL to clean
 		 * @return string The cleaned URL
 		 */
 		protected function cleanUrl($strUrl) {
-			return preg_replace('|(?<!:)/{2,}|', '/', $strUrl);
+			$strUrl = preg_replace('|(?<!:)/{2,}|', '/', trim($strUrl));
+			if ($this->blnEndSlash && substr($strUrl, -1) != '/') {
+				$strUrl .= '/';
+			}
+			return $strUrl;
 		}
 		
 		
