@@ -50,7 +50,7 @@
 		 * @param string $strBaseUrl The base path of the system relative to the doc root
 		 * @param string $blnEndSlash Whether to force the URL to end with a slash 
 		 */
-		public function __construct($strBaseUrl, $blnEndSlash = true) {
+		public function __construct($strBaseUrl, $blnEndSlash = false) {
 			$this->strBaseUrl = $strBaseUrl;
 			$this->blnEndSlash = $blnEndSlash;
 		}
@@ -92,6 +92,8 @@
 				$strUrl = implode('/', array_slice($GLOBALS['argv'], 2));
 			} else if (!empty($_SERVER['PATH_INFO'])) {
 				$strUrl = $_SERVER['PATH_INFO'];
+			} else if (!empty($_SERVER['REQUEST_URI'])) {
+				$strUrl = $_SERVER['REQUEST_URI'];
 			} else {
 				$strUrl = '/';
 			}
