@@ -76,6 +76,7 @@
 			
 			$this->routeUrl();
 			$this->parseUrl();
+			$this->slashUrl();
 			
 			$this->blnInitialized = true;
 		}
@@ -133,20 +134,29 @@
 		
 		
 		/**
-		 * Cleans up the URL by replacing any double slashes with
-		 * single slashes. Doesn't replace double slashes following
-		 * a colon. Also makes sure the URL ends with a slash.
+		 * Cleans up the URL by replacing any double slashes
+		 * with single slashes. Doesn't replace double slashes
+		 * following a colon.
 		 *
 		 * @access protected
 		 * @param string $strUrl The URL to clean
 		 * @return string The cleaned URL
 		 */
 		protected function cleanUrl($strUrl) {
-			$strUrl = preg_replace('|(?<!:)/{2,}|', '/', trim($strUrl));
-			if ($this->blnEndSlash && substr($strUrl, -1) != '/') {
-				$strUrl .= '/';
+			return preg_replace('|(?<!:)/{2,}|', '/', trim($strUrl));
+		}
+		
+		
+		/**
+		 * Adds a trailing slash to the URL if it doesn't
+		 * have an extension.
+		 *
+		 * @access protected
+		 */
+		protected function slashUrl() {
+			if ($this->blnEndSlash && !$this->strExtension && substr($this->strUrl, -1) != '/') {
+				$this->strUrl .= '/';
 			}
-			return $strUrl;
 		}
 		
 		

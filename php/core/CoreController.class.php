@@ -289,21 +289,24 @@
 		
 		/**
 		 * Saves all the failed template caches at once.
+		 * If any errors were triggered the nothing is
+		 * cached.
 		 *
 		 * @access public
 		 */
 		public function saveNodeCaches() {
 			if (!AppRegistry::get('Error')->getErrorFlag()) {
 				if (!empty($this->arrCacheInfo['NodeList'])) {
+					$objDisplay = AppDisplay::getInstance();
 					$objCache = AppRegistry::get('Cache');
 					$objCache->initPresentation();
 					
 					foreach ($this->arrCacheInfo['NodeList'] as $strNode=>$arrCacheParams) {
 						if (!empty($arrCacheParams['Failed'])) {
 							if ($strNamespace = $this->getCacheNamespace($strNode)) {
-								$objCache->saveNS($this->getCacheKey($strNode), $strNamespace, AppDisplay::getInstance()->getNode($strNode), $arrCacheParams['Expire']);
+								$objCache->saveNS($this->getCacheKey($strNode), $strNamespace, $objDisplay->getNode($strNode), $arrCacheParams['Expire']);
 							} else {
-								$objCache->save($this->getCacheKey($strNode), AppDisplay::getInstance()->getNode($strNode), $arrCacheParams['Expire']);
+								$objCache->save($this->getCacheKey($strNode), $objDisplay->getNode($strNode), $arrCacheParams['Expire']);
 							}
 						}
 					}
@@ -316,8 +319,8 @@
 		 * Check if caching is turned on and if the URL matches
 		 * one of the cacheable URL patterns. If so it gets the
 		 * array of nodes that should be cached. Also runs the
-		 * namespace through a function in case any page-specific
-		 * data needs adding to it.
+		 * namespace through an extendable function in case any
+		 * page-specific data needs adding to it.
 		 *
 		 * @access protected
 		 * @return boolean True if there are cacheable nodes
@@ -358,7 +361,8 @@
 		
 		/**
 		 * Returns the cache namespace. This can be extended to
-		 * format the namespace based on the URL or user.
+		 * format the namespace based on some dynamic data such
+		 * as the URL or user.
 		 *
 		 * @access protected
 		 * @return
@@ -372,14 +376,13 @@
 		
 		/**
 		 * Returns the cacheable node info. Must include the
-		 * expiration time in seconds. This can be extended to
-		 * format the namespace based on the URL or user.
+		 * expiration time in seconds.
 		 *
 		 * @access protected
 		 * @param array $arrNode The node definition from $arrCacheUrls
 		 * @return array The array of cacheable node info
 		 */
-		protected function assignCacheableNode(&$arrNode) {
+		protected function assignCacheableNode($arrNode) {
 			return array(
 				'Failed'	=> null,
 				'Namespace'	=> !empty($arrNode['Namespace']) ? $arrNode['Namespace'] : null,

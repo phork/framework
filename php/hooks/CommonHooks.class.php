@@ -27,7 +27,7 @@
 		 */
 		public function verifyToken() {
 			AppLoader::includeUtility('Token');
-			if (!empty($_POST) && !Token::verifyRequest()) {
+			if (AppRegistry::get('Url')->getMethod() == 'POST' && !Token::verifyRequest()) {
 				AppRegistry::get('Bootstrap')->fatal(400);
 			}
 		}
@@ -35,7 +35,7 @@
 		
 		/**
 		 * Tracks each URL visited by the user and stores
-		 * it in their session. Used for redirecting users
+		 * it in their session. Useful for redirecting users
 		 * back to previous pages as necessary.
 		 *
 		 * @access public
