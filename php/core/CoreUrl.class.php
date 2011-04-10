@@ -70,15 +70,74 @@
 			$this->blnInitialized = false;
 			$this->strRoutedUrl = null;
 			
-			(($this->strMethod = $strMethod) !== null) || ($this->strMethod = $_SERVER['REQUEST_METHOD']);
-			(($this->strUrl = $strUrl) !== null) || $this->detectUrl();
-			(($this->arrVariables = $arrVariables) !== null) || $this->detectVariables();
+			if ($strMethod !== null) {
+				$this->strMethod = $strMethod;
+			} else {
+				$this->strMethod = $_SERVER['REQUEST_METHOD'];
+			}
+			
+			if ($strUrl !== null) {
+				$this->strUrl = $strUrl;
+			} else if (!$this->strUrl) {
+				$this->detectUrl();
+			}
+			
+			if ($arrVariables !== null) {
+				$this->arrVariables = $arrVariables;
+			} else {
+				$this->detectVariables();
+			}
 			
 			$this->routeUrl();
 			$this->parseUrl();
 			$this->slashUrl();
 			
 			$this->blnInitialized = true;
+		}
+		
+		
+		/**
+		 * Makes adjustments to account for the URL using
+		 * a query string. This can be in either the format
+		 * /index.php?/path/to/page/ if using mod rewrite or
+		 * /index.php?url=/path/to/page/ if not using mod
+		 * rewrite. When using the first format no variable
+		 * should be passed. When using the second format
+		 * the variable containing the URL should be passed
+		 * (eg. url). This reset the $_GET array and removes
+		 * any effect the URL may have had on it.
+		 *
+		 * @access public
+		 * @param string $strVariable The variable name, if the URL isn't the full query string
+		 */
+		public function useQueryString($strVariable = null) {
+			$strUrl = '/';
+			$strQueryString = '';
+			
+			if (!empty($_SERVER['QUERY_STRING'])) {
+				if ($strVariable) {
+					if (preg_match('/(' . $strVariable . '=([^&]*))?&?(.*)/', $_SERVER['QUERY_STRING'], $arrMatches)) {
+						if (!empty($arrMatches[2])) {
+							$strUrl .= $arrMatches[2];
+						}
+						if (!empty($arrMatches[3])) {
+							$strQueryString .= $arrMatches[3];
+						}
+					}
+				} else {
+					if ($intPos = strpos($_SERVER['QUERY_STRING'], '&')) {
+						$strUrl .= substr($_SERVER['QUERY_STRING'], 0, $intPos);
+						$strQueryString .= substr($_SERVER['QUERY_STRING'], $intPos + 1);
+					} else if (empty($_SERVER['REQUEST_URI']) || !strstr($_SERVER['REQUEST_URI'], '?')) {
+						$strUrl .= $_SERVER['QUERY_STRING'];
+					} else {
+						$strQueryString .= $_SERVER['QUERY_STRING'];
+					}
+				}
+			}
+			
+			$this->strUrl = $strUrl;
+			parse_str($strQueryString, $_GET);
 		}
 		
 		
