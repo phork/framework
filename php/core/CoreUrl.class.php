@@ -7,9 +7,12 @@
 	 * CoreUrl.class.php
 	 * 
 	 * The URL class parses and routes the URL. The base
-	 * URL is the application path relative to the document
-	 * root, and including the filename when not using mod
-	 * rewrite (eg. /admin or index.php).
+	 * URL is the front controller path relative to the
+	 * document root, and including the filename when not
+	 * using mod rewrite (eg. /admin or index.php). The
+	 * URL and request data can either be determined
+	 * automatically or passed as arguments to the init()
+	 * method.
 	 *
 	 * This must be extended by an AppUrl class.
 	 *
@@ -104,8 +107,12 @@
 		 * rewrite. When using the first format no variable
 		 * should be passed. When using the second format
 		 * the variable containing the URL should be passed
-		 * (eg. url). This reset the $_GET array and removes
-		 * any effect the URL may have had on it.
+		 * (eg. url). This resets the $_GET array and removes
+		 * any effect the URL may have had on it. It works
+		 * with additional non-URL GET data as well as URLs
+		 * with equals sign filters. For example the query
+		 * string index.php?/path/to/filter=1/page/ will not
+		 * end up with a variable named /path/to/filter.
 		 *
 		 * @access public
 		 * @param string $strVariable The variable name, if the URL isn't the full query string

@@ -116,7 +116,7 @@
 			$strSessionName = AppConfig::get('TokenSessionName');
 			
 			if ($blnResult = !empty($_SESSION[$strSessionName][$strToken])) {
-				unset($_SESSION[$strSessionName][$strToken ]);
+				unset($_SESSION[$strSessionName][$strToken]);
 			}
 			return $blnResult;
 		}

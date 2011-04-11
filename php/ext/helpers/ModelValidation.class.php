@@ -453,12 +453,28 @@
 				return $arrValidator['Error'];	
 			}
 			
+			//validate the type of object
+			if (array_key_exists('InstanceOf', $arrValidator)) {
+				if (!($mxdValue instanceof $arrValidator['InstanceOf'])) {
+					if (empty($arrValidator['Error'])) {
+						return AppLanguage::translate('%s must be an instance of %s', $strProperty, $arrValidator['InstanceOf']);
+					}
+					return $arrValidator['Error'];
+				}
+			}
+			
 			return true;
 		}
 		
 		
 		/**
 		 * Validates an email address and checks its MX record.
+		 * The preferred validation uses filter_var() but that
+		 * requires PHP >= 5.2.0. The fallback is a regular
+		 * expression which comes with this copyright:
+		 * 
+		 * Copyright Michael Rushton 2009-10
+		 * http://squiloople.com/
 		 *
 		 * @access public
 		 * @param string $strProperty The name of the property to validate
@@ -467,16 +483,19 @@
 		 * @return mixed True on success, or the error on failure
 		 */
 		public function validateEmail($strProperty, $strValue, &$arrValidator) {
+			if (function_exists('filter_var')) {
+				$blnValid = (filter_var($strValue, FILTER_VALIDATE_EMAIL) !== false);
+			} else {
+				$blnValid = preg_match('/^(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){255,})(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){65,}@)(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22))(?:\\.(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-[a-z0-9]+)*\\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-[a-z0-9]+)*)|(?:\\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\\]))$/iD', $strValue);
+			}
 			
-			//make sure that the email address matches the regex
-			if (!preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[_a-z0-9-]+(\.[_a-z0-9-]+)*\.[a-z]{2,}$/i', $strValue)) {
+			if (!$blnValid) {
 				if (empty($arrValidator['Error'])) {
 					return AppLanguage::translate('%s must be a valid email address', $strProperty, $strValue);
 				}
 				return $arrValidator['Error'];
 			}
 			
-			//check for the MX record
 			if (!empty($arrValidator['CheckMx']) && function_exists('checkdnsrr')) {
 				$arrEmailSegments = explode('@', $strValue);
 				if (!checkdnsrr($strEmailDomain = array_pop($arrEmailSegments), 'MX')) {
