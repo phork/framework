@@ -150,7 +150,8 @@
 		
 		/**
 		 * Checks for a PHP CLI script first, followed by the
-		 * path info, and sets up the URL.
+		 * path info, and sets up the URL. The URL does not
+		 * include the base path.
 		 *
 		 * @access public
 		 */
@@ -158,9 +159,9 @@
 			if (empty($_SERVER['HTTP_HOST'])) {
 				$strUrl = implode('/', array_slice($GLOBALS['argv'], 2));
 			} else if (!empty($_SERVER['PATH_INFO'])) {
-				$strUrl = $_SERVER['PATH_INFO'];
+				$strUrl = str_replace($this->strBaseUrl, '', $_SERVER['PATH_INFO']);
 			} else if (!empty($_SERVER['REQUEST_URI'])) {
-				$strUrl = $_SERVER['REQUEST_URI'];
+				$strUrl = str_replace($this->strBaseUrl, '', $_SERVER['REQUEST_URI']);
 			} else {
 				$strUrl = '/';
 			}
