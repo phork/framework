@@ -159,8 +159,8 @@
 		
 		/**
 		 * Verifies the file to concat and makes sure it's
-		 * in a trusted domain, then returns the full URL of
-		 * the file.
+		 * in a trusted domain or directory, then returns
+		 * the full URL of the file.
 		 *
 		 * @access protected
 		 * @param string $strFile The urlencoded filename to verify

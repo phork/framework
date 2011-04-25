@@ -508,7 +508,8 @@
 		
 		
 		/**
-		 * Validates an datetime format.
+		 * Validates that a datetime value is in the format
+		 * Y-m-d H:i:s.
 		 *
 		 * @access public
 		 * @param string $strProperty The name of the property to validate
@@ -517,8 +518,6 @@
 		 * @return mixed True on success, or the error on failure
 		 */
 		public function validateDatetime($strProperty, $strValue, &$arrValidator) {
-			
-			//make sure that the value matches the regex
 			if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/i', $strValue)) {
 				if (empty($arrValidator['Error'])) {
 					return AppLanguage::translate('%s must be a valid datetime (YYYY-MM-DD hh:mm:ss)', $strProperty, $strValue);
