@@ -174,7 +174,7 @@
 				$arrFilters['Conditions'] = array();
 			}
 			$arrFilters['Conditions'][] = array(
-				'Column'	=> $this->strPrimaryKey,
+				'Column'	=> $this->strTable . '.' . $this->strPrimaryKey,
 				'Value' 	=> $mxdId,
 				'Operator'	=> is_array($mxdId) ? 'IN' : '='
 			);
