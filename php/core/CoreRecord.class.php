@@ -4,7 +4,7 @@
 	 * 
 	 * Stores a record from a data source such as a
 	 * database. Usually used in conjunction with a 
-	 * CoreModel[Datatype] object.
+	 * CoreModel object.
 	 *
 	 * Copyright 2006-2011, Phork Labs. (http://phorklabs.com)
 	 *

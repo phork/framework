@@ -98,7 +98,7 @@
 		 * @return array An array with the success flag and the results
 		 * @static
 		 */
-		static public function post($strUrl, &$arrPost, $blnInternal = true) {
+		static public function post($strUrl, $arrPost, $blnInternal = true) {
 			$objUrl = clone AppRegistry::get('Url');
 			$objUrl->init('POST', $strUrl, $arrPost);
 			

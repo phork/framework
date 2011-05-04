@@ -67,7 +67,7 @@
 		 * @access public
 		 * @param string $strMethod The request method (GET, POST, PUT, DELETE, HEAD)
 		 * @param string $strUrl The URL of the request relative to the base URL
-		 * @param array $arrVariables Any request variables (eg. override $_GET)
+		 * @param array $arrVariables Any request variables (ie. to override $_GET)
 		 */
 		public function init($strMethod = null, $strUrl = null, $arrVariables = null) {
 			$this->blnInitialized = false;
@@ -340,7 +340,7 @@
 		
 		/**
 		 * Returns the URL of the current page including
-		 * the base URL.
+		 * the base URL and optionally the query string.
 		 *
 		 * @access public
 		 * @param boolean $blnQueryString Whether to include the query string
@@ -390,8 +390,7 @@
 		
 		
 		/**
-		 * Returns all the URL segments. If the URL hasn't
-		 * been parsed it does that here.
+		 * Returns all the URL segments as an array.
 		 *
 		 * @access public
 		 * @return array The URL segments
@@ -462,7 +461,7 @@
 		 * to use based on the URL.
 		 *
 		 * @access public
-		 * @param array $arrRoutes The routes
+		 * @param array $arrRoutes The routes to use
 		 */
 		public function setRoutes($arrRoutes) {
 			$this->arrRoutes = $arrRoutes;
