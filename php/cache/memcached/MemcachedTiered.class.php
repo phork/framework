@@ -145,33 +145,6 @@
 		
 		
 		/**
-		 * Retrieves the cache data for the key passed.
-		 *
-		 * @access public
-		 * @param string $strKey The key to retrieve
-		 * @return mixed The retrieved data or null on failure
-		 */
-		public function load($strKey) {
-			if ($strKey = $this->cleanKey($strKey)) {
-				CoreDebug::debug($this, "Load {$strKey}");
-				
-				if ($this->checkTier()) {
-					$mxdResult = $this->objActive->objCache->get($strKey);
-					if ($mxdResult === false) {
-						$mxdResult = null;
-					}
-				} else {
-					$mxdResult = null;
-				}
-				
-				CoreDebug::debug($this, ($mxdResult ? 'Hit' : 'Miss'));
-				
-				return $mxdResult;
-			}
-		}
-		
-		
-		/**
 		 * Retrieves the cache data for the keys passed.
 		 *
 		 * @access public

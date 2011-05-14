@@ -234,6 +234,7 @@
 		 *
 		 * @access public
 		 * @param integer $intUserId The user ID to set the cookie for
+		 * @return string The value of the cookie if it was set successfully
 		 */
 		public function setCookie($intUserId) {
 			AppLoader::includeModel($this->strUserLoginModelName);
@@ -247,7 +248,9 @@
 				
 				if ($objUserLogin->save()) {
 					$strValue = $intUserId . self::COOKIE_SEPARATOR . $objUserLogin->first()->get('publickey');
-					setcookie($this->strUserCookieName, $strValue, time() + (86400 * 365), AppConfig::get('CookiePath'), AppConfig::get('CookieDomain'));
+					if (setcookie($this->strUserCookieName, $strValue, time() + (86400 * 365), AppConfig::get('CookiePath'), AppConfig::get('CookieDomain'))) {
+						return $strValue;
+					}
 				}
 			}
 		}
