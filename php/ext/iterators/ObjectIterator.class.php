@@ -50,9 +50,10 @@
 		 * @access public
 		 * @param string $strProperty The property to key the results by
 		 * @param boolean $blnAggregate Whether to create a multi-dimensional array (true) or to overwrite (false)
+		 * @param boolean $blnForceAggregate Whether to force the result to be an array even if a single record was returned
 		 * @return array The associative array
 		 */
-		public function getAssociativeList($strProperty, $blnAggregate = true) {
+		public function getAssociativeList($strProperty, $blnAggregate = true, $blnForceAggregate = false) {
 			$arrItems = array();
 			
 			foreach ($this->arrItems as $mxdItem) {
@@ -64,7 +65,11 @@
 							$arrItems[$mxdValue] = array($arrItems[$mxdValue], $mxdItem);
 						}
 					} else {
-						$arrItems[$mxdValue] = $mxdItem;
+						if ($blnForceAggregate) {
+							$arrItems[$mxdValue] = array($mxdItem);
+						} else {
+							$arrItems[$mxdValue] = $mxdItem;
+						}
 					}
 				}
 			}

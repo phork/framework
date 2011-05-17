@@ -131,6 +131,6 @@
 				$objInstance->arrConfig[$strNamespace] = array();
 			}
 			
-			return $objInstance->arrConfig[$strNamespace][$strConfig]  = $mxdValue;
+			return $objInstance->arrConfig[$strNamespace][$strConfig] = $mxdValue;
 		}
 	}
