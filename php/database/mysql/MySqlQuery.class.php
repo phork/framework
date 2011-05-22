@@ -780,6 +780,8 @@
 					$strQuery .= $arrColumn['Column'] . ' = ';
 					if ($arrColumn['NoFormat']) {
 						$strQuery .= $arrColumn['Value'];
+					} else if ($arrColumn['Value'] === null) {
+						$strQuery .= 'NULL';
 					} else {
 						$strQuery .= "'" . $this->objDb->escapeString($arrColumn['Value']) . "'";
 					}
@@ -830,6 +832,8 @@
 				foreach ($this->arrColumn as $intId=>$arrColumn) {
 					if ($arrColumn['NoFormat']) {
 						$strQuery .= $arrColumn['Value'];
+					} else if ($arrColumn['Value'] === null) {
+						$strQuery .= 'NULL';
 					} else {
 						$strQuery .= "'" . $this->objDb->escapeString($arrColumn['Value']) . "'";
 					}

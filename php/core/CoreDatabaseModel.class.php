@@ -42,6 +42,7 @@
 		protected $arrUpdateCols;
 		
 		protected $blnAutoSanitize = true;
+		protected $blnConvertNulls = true;
 		
 		const ID_PROPERTY = '__id';
 		
@@ -283,6 +284,8 @@
 		
 		/**
 		 * Returns the query to save the data in the database.
+		 * Has additional handling to force nulls values to empty
+		 * strings.
 		 *
 		 * @access protected
 		 * @param boolean $blnForceInsert Whether to force insert a record if it has an ID
@@ -304,7 +307,11 @@
 			}
 			
 			foreach ($arrSaveCols as $strColumn) {
-				$objQuery->addColumn($strColumn, $this->current()->get($strColumn));
+				$mxdValue = $this->current()->get($strColumn);
+				if ($mxdValue === null && $this->blnConvertNulls) {
+					$mxdValue = '';
+				}
+				$objQuery->addColumn($strColumn, $mxdValue);
 			}
 			
 			return $objQuery->buildQuery();

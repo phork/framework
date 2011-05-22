@@ -2,7 +2,7 @@
 	//set the error reporting level (must always include E_USER errors)
 	error_reporting(E_ALL | E_STRICT);
 
-	//make sure there are the correct arguments passed
+	//make sure the correct arguments were passed
 	if ($GLOBALS['argc'] < 4) {
 		die(
 			'Usage: php /path/to/scripts/index.php configtype controller method [arg1] [arg2] ... [argn]' . "\n" .

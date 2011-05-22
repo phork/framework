@@ -418,8 +418,8 @@ replace: Invalid base cache configuration
 default: Invalid key: %s
 replace: Invalid key: %s
 
-default: %s must be unique
-replace: %s must be unique
+default: %s (%s) must be unique
+replace: %s (%s) must be unique
 
 default: Only objects that implement the Sql interface can be added to the database manager
 replace: Only objects that implement the Sql interface can be added to the database manager

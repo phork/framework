@@ -554,7 +554,7 @@
 			if ($objModelClone->load($arrFilters) && $objModelClone->count()) {
 				if ($objModelClone->first()->get('__id') && $objModelClone->first()->get('__id') != $objModel->current()->get('__id')) {
 					if (empty($arrValidator['Error'])) {
-						return AppLanguage::translate('%s must be unique', $strProperty);
+						return AppLanguage::translate('%s (%s) must be unique', $strProperty, $mxdValue);
 					}
 					return $arrValidator['Error'];
 				}
