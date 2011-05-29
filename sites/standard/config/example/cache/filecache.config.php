@@ -1,6 +1,7 @@
 <?php
 	//the cache type must have a corresponding class
 	$arrConfig['Type'] = 'Filecache';
+	$arrConfig['KeyPrefix'] = null;
 	
 	
 	//the cache filesystem for the base tier; the base path is relative to the files dir

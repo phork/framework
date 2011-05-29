@@ -20,7 +20,7 @@
 		const CACHE_ADD_ONLY = 1;
 		const CACHE_REPLACE_ONLY = 2;
 		
-		public function __construct(CacheTier $objBase, CacheTier $objPresentation);
+		public function __construct(CacheTier $objBase, CacheTier $objPresentation, $strKeyPrefix = null);
 		public function __destruct();
 		static public function isAvailable();
 		public function getTier($strTier);

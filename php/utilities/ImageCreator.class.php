@@ -113,6 +113,17 @@
 				trigger_error(AppLanguage::translate('There was an error creating the resized image'));
 				return false;
 			}
+			
+			//sharpen the image
+			if (function_exists('imageconvolution')) {
+				$arrMatrix = array(
+					array(-1, -1, -1),
+					array(-1, 16, -1),
+					array(-1, -1, -1),
+				);
+				$intDivisor = array_sum(array_map('array_sum', $arrMatrix));
+				imageconvolution($rscResized, $arrMatrix, $intDivisor, 0);
+			}
 		
 			//create the new image
 			if (!$strOutputFunction($rscResized, $strResizedPath)) {

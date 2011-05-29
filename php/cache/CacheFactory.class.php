@@ -69,7 +69,7 @@
 						}
 						
 						//instantiate a new cache object
-						$objCache = new $strType($arrResources['Base'], $arrResources['Presentation']);
+						$objCache = new $strType($arrResources['Base'], $arrResources['Presentation'], !empty($this->arrConfig['KeyPrefix']) ? $this->arrConfig['KeyPrefix'] : null);
 						unset($arrResources['Base'], $arrResources['Presentation']);
 						
 						//add any other tiers to it

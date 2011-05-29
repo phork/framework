@@ -260,13 +260,15 @@
 		 * @param string $strAlias The table alias
 		 * @param array $mxdJoinUsing The columns to join on (array for join ON, string for join USING)
 		 * @param string $strJoinType The join type
+		 * @param boolean $blnNoQuote If this is true then the table in the query won't be in quotation marks
 		 */
-		public function addTableJoin($strTable, $strAlias = null, $mxdJoinUsing = null, $strJoinType = null) {
+		public function addTableJoin($strTable, $strAlias = null, $mxdJoinUsing = null, $strJoinType = null, $blnNoQuote = false) {
 			$this->arrTableJoin[] = array(
 				'Table'		=> $strTable,
 				'Alias'		=> $strAlias,
 				'JoinUsing'	=> $mxdJoinUsing,
-				'JoinType'	=> $strJoinType
+				'JoinType'	=> $strJoinType,
+				'NoQuote'	=> $blnNoQuote
 			);
 		}
 		
@@ -713,7 +715,11 @@
 						$strQuery .= ' JOIN ';
 					}
 					
-					$strQuery .= '`' . $arrTable['Table'] . '`';
+					if ($arrTable['NoQuote']) {
+						$strQuery .= $arrTable['Table'];
+					} else {
+						$strQuery .= '`' . $arrTable['Table'] . '`';
+					}
 					
 					if ($arrTable['Alias']) {
 						$strQuery .= ' AS ' . $arrTable['Alias'];

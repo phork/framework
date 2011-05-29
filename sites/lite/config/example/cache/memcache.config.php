@@ -1,6 +1,7 @@
 <?php
 	//the cache type must have a corresponding class (Memcache or Memcached)
 	$arrConfig['Type'] = 'Memcache';
+	$arrConfig['KeyPrefix'] = null;
 	
 	
 	//the cache server(s) for the base tier

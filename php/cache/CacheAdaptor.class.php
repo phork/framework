@@ -36,6 +36,7 @@
 		protected $objActive;
 		
 		protected $intMaxKeyLength = 250;
+		protected $strKeyPrefix;
 		
 		
 		/**
@@ -45,10 +46,12 @@
 		 * @access public
 		 * @param object $objBase The base tier object
 		 * @param object $objPresentation The presentation tier object
+		 * @param string $strKeyPrefix An optional prefix to add to each cache key
 		 */
-		public function __construct(CacheTier $objBase, CacheTier $objPresentation) {
+		public function __construct(CacheTier $objBase, CacheTier $objPresentation, $strKeyPrefix = null) {
 			$this->addTier('Base', $objBase);
 			$this->addTier('Presentation', $objPresentation);
+			$this->strKeyPrefix = $strKeyPrefix;
 		}
 		
 		
@@ -83,7 +86,8 @@
 		
 		/**
 		 * Cleans the special characters out of a key or array
-		 * of keys.
+		 * of keys. Also adds the optional key prefix if it hasn't
+		 * been added already.
 		 *
 		 * @access public
 		 * @param mixed $mxdKey The key or array of keys to clean
@@ -96,6 +100,14 @@
 				if (strlen($strCleanKey = preg_replace('/[^a-z0-9\|:]/i', '_', $mxdKey)) > $this->intMaxKeyLength) {
 					$strCleanKey = substr($strCleanKey, 0, $this->intMaxKeyLength - 34) . '__' . md5($strCleanKey);
 				}
+				
+				if ($this->strKeyPrefix) {
+					$strKeyPrefix = $this->strKeyPrefix . '|';
+					if (substr($strCleanKey, 0, strlen($strKeyPrefix)) != $strKeyPrefix) {
+						$strCleanKey = $strKeyPrefix . $strCleanKey;
+					} 
+				}
+				
 				return $strCleanKey;
 			}
 		}

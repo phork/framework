@@ -1,6 +1,7 @@
 <?php
 	//the cache type must have a corresponding class
 	$arrConfig['Type'] = 'Dbcache';
+	$arrConfig['KeyPrefix'] = null;
 	
 	//the database configuration for the base tier
 	$arrConfig['Tiers']['Base']['TierKey'] = 'base';
